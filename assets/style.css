@@ -249,3 +249,22 @@ footer.site { border-top: 1px solid var(--border); color: var(--muted); font-siz
 .num-table { border-collapse: collapse; margin: 8px 0; font-size: 15px; }
 .num-table th, .num-table td { border: 1px solid var(--border); padding: 4px 10px; text-align: right; }
 .num-table th { font-weight: 600; }
+
+/* Варианты ответа */
+.choices { display: grid; gap: 8px; margin: 8px 0; }
+button.choice {
+  text-align: left; padding: 10px 14px; background: var(--surface); width: 100%;
+  overflow-x: auto; font-size: 16px;
+}
+button.choice:hover { border-color: var(--accent); }
+button.choice.correct { border-color: var(--good); background: var(--good-soft); }
+button.choice.wrong { border-color: var(--bad); background: var(--bad-soft); }
+
+/* Таблицы истинности */
+.tt-wrap { overflow-x: auto; }
+.tt td, .tt th { text-align: center; min-width: 36px; }
+.tt .tt-f { background: var(--surface-2); }
+.tt tr.diff td { background: var(--bad-soft); }
+
+/* Мелкий поясняющий текст */
+.small-note { display: block; color: var(--muted); font-size: 15px; margin: 6px 0; }
