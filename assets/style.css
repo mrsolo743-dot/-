@@ -301,3 +301,14 @@ canvas.arrows { display: block; width: 100%; max-width: 460px; height: 240px; ma
 .row > label select { min-width: 0; max-width: 100%; text-overflow: ellipsis; }
 /* Длинные многочлены — строчной формулой покрупнее, с переносами */
 p.poly { font-size: 1.12em; line-height: 2; text-align: center; }
+
+/* Итоги исследования и таблица знаков */
+dl.facts { display: grid; grid-template-columns: max-content 1fr; gap: 6px 14px; margin: 12px 0; }
+dl.facts dt { font-weight: 600; color: var(--muted); }
+dl.facts dd { margin: 0; min-width: 0; overflow-x: auto; }
+@media (max-width: 520px) { dl.facts { grid-template-columns: 1fr; } dl.facts dd { margin-bottom: 6px; } }
+table.signs th, table.signs td { text-align: center; white-space: nowrap; }
+table.signs .pt { background: var(--surface-2); }
+/* Контейнеры с прокруткой должны быть «точкой отсчёта» для абсолютно позиционированных
+   элементов внутри (скрытый MathML у KaTeX), иначе те выпадают наружу и расширяют страницу */
+.tt-wrap, .katex-display, .formula, dl.facts dd, button.choice, .preview { position: relative; }
