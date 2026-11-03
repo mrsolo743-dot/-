@@ -274,3 +274,21 @@ canvas.plot.numline { aspect-ratio: 5 / 2; max-height: 240px; }
 /* Галочка «достигается» в тренажёре sup/inf */
 .attain { font-size: 14px; color: var(--muted); white-space: nowrap; display: inline-flex; gap: 4px; align-items: center; }
 .attain[hidden] { display: none; }
+
+/* Диаграммы Венна и стрелочные диаграммы */
+.venn-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; margin-top: 12px; }
+.venn-row figure { margin: 0; }
+.venn-row figure[hidden] { display: none; }
+.venn-row figcaption { text-align: center; margin-top: 4px; }
+canvas.venn { display: block; width: 100%; aspect-ratio: 41 / 30; max-height: 340px; border-radius: var(--radius); border: 1px solid var(--border); }
+#area canvas.venn { max-width: 460px; margin: 8px auto; }
+canvas.arrows { display: block; width: 100%; max-width: 460px; height: 240px; margin: 8px auto; background: var(--surface); }
+
+/* Таблицы: дроби и диагональ Кантора */
+.qtab td { min-width: 44px; text-align: center; }
+.qtab td sup { color: var(--accent); font-weight: 700; margin-left: 2px; }
+.qtab td.dim, .dim { opacity: .4; }
+.cantor td.mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: 2px; text-align: left; font-size: 16px; }
+.cantor .diag { background: var(--warn-soft); font-weight: 700; border-radius: 3px; }
+.cantor .diag.new { background: var(--good-soft); color: var(--good); }
+.cantor tr.new th, .cantor tr.new td { border-top: 2px solid var(--text); }
