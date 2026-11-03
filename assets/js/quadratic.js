@@ -9,22 +9,6 @@
   };
   const near = (v) => Math.abs(v * 100 - Math.round(v * 100)) < 1e-9;
 
-  // ---------- 1. Пошаговый вывод формулы ----------
-  const steps = Array.from(document.querySelectorAll('#derivation > li'));
-  let shown = 1;
-  function updateSteps() {
-    steps.forEach((li, i) => { li.hidden = i >= shown; });
-    $('next-step').disabled = shown >= steps.length;
-  }
-  $('next-step').addEventListener('click', () => {
-    shown = Math.min(shown + 1, steps.length);
-    updateSteps();
-    steps[shown - 1].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-  });
-  $('all-steps').addEventListener('click', () => { shown = steps.length; updateSteps(); });
-  $('reset-steps').addEventListener('click', () => { shown = 1; updateSteps(); });
-  updateSteps();
-
   // ---------- 2. Интерактивный график ----------
   const plot = new Plot($('plot'));
   const sliders = { a: $('sa'), b: $('sb'), c: $('sc') };

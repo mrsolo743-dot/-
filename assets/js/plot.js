@@ -2,7 +2,7 @@
 // Использование:
 //   const p = new Plot(canvas);
 //   p.setView({ xMin: -10, xMax: 10, yMin: -8, yMax: 8, equal: true });
-//   p.draw([{ fn: x => x * x }], [{ x: 1, y: 1, label: 'A' }], [{ x1: 0, y1: -5, x2: 0, y2: 5 }]);
+//   p.draw([{ fn: x => x * x, color, width, dash }], [{ x: 1, y: 1, label: 'A' }], [{ x1: 0, y1: -5, x2: 0, y2: 5 }]);
 // equal: true — клетки квадратные (масштаб по осям одинаковый),
 // equal: false — каждая ось масштабируется отдельно (для «высоких» графиков).
 (function (global) {
@@ -158,19 +158,26 @@
       // Кривые
       const limit = (fv.yMax - fv.yMin) * 50;
       for (const c of this.curves) {
+        ctx.save();
         ctx.strokeStyle = c.color || cssVar('--curve', '#2f6fdb');
         ctx.lineWidth = c.width || 2.5;
+        if (c.dash) ctx.setLineDash(c.dash);
         ctx.beginPath();
         let pen = false;
+        let lastPy = 0;
         const n = Math.ceil(this.w * 2);
         for (let i = 0; i <= n; i++) {
           const x = fv.xMin + (fv.xMax - fv.xMin) * (i / n);
           const y = c.fn(x);
           if (!isFinite(y) || Math.abs(y) > limit) { pen = false; continue; }
           const [px, py] = this.toPx(x, y);
+          // Разрыв (например, у tg x): не соединяем точки через всю высоту
+          if (pen && Math.abs(py - lastPy) > this.h) pen = false;
           if (!pen) { ctx.moveTo(px, py); pen = true; } else { ctx.lineTo(px, py); }
+          lastPy = py;
         }
         ctx.stroke();
+        ctx.restore();
       }
 
       // Точки
