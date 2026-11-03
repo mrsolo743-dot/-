@@ -113,12 +113,54 @@
       '<p>При ' + tex('\\varepsilon = ' + fmt(eps, 2)) + ' подходит ' + tex('\\delta ' + (F.exact ? '= ' : '\\approx ') + fmt(delta, 3)) + ': если ' + tex('0 < |x - ' + F.x0 + '| < \\delta') + ', то график внутри синей полосы. Любое меньшее ' + tex('\\delta') + ' тоже подходит.</p>',
     ];
     if (F.exact) out.push('<p>Формула для любого \\(\\varepsilon\\): ' + tex(F.exactTex) + '. Найти её — и значит доказать предел.</p>');
-    else out.push('<p>Здесь явную формулу для \\(\\delta\\) найти трудно; предел доказывается иначе — через неравенство \\(\\cos x &lt; \\frac{\\sin x}{x} &lt; 1\\) (см. §5).</p>');
+    else out.push('<p>Здесь явную формулу для \\(\\delta\\) найти трудно; предел доказывается иначе — через неравенство \\(\\cos x &lt; \\frac{\\sin x}{x} &lt; 1\\) (см. §6).</p>');
     $('ed-readout').innerHTML = out.join('');
     renderMath($('ed-readout'));
   }
   $('ed-sel').addEventListener('change', edUpdate);
   $('ed-eps').addEventListener('input', edUpdate);
+
+  // ---------- 2½. Верхний и нижний пределы: огибающие хвостов ----------
+  const LS = [
+    { f: (n) => Math.pow(-1, n) * (1 + 1 / n), sup: 1, inf: -1, supTex: '1', infTex: '-1' },
+    { f: (n) => 2 * Math.cos((2 * Math.PI * n) / 3) + 1 / n, sup: 2, inf: -1, supTex: '2', infTex: '-1' },
+    { f: (n) => Math.pow(1 + Math.pow(-1, n) / n, n), sup: Math.E, inf: 1 / Math.E, supTex: 'e', infTex: '\\frac{1}{e}' },
+    { f: (n) => Math.sin(n), sup: 1, inf: -1, supTex: '1', infTex: '-1', dense: true },
+    { f: (n) => (2 * n + 1) / (n + 3), sup: 2, inf: 2, supTex: '2', infTex: '2' },
+  ];
+  const lsPlot = new Plot($('ls-plot'));
+  function lsUpdate() {
+    const s = LS[+$('ls-sel').value];
+    const N = 80, M = N + 20000;
+    const a = [NaN];
+    for (let n = 1; n <= M; n++) a.push(s.f(n));
+    // суффиксные sup и inf: S[n] = sup_{k>=n} a_k (по первым M членам)
+    const S = new Array(M + 2), I = new Array(M + 2);
+    S[M + 1] = -Infinity; I[M + 1] = Infinity;
+    for (let n = M; n >= 1; n--) { S[n] = Math.max(a[n], S[n + 1]); I[n] = Math.min(a[n], I[n + 1]); }
+    let lo = Infinity, hi = -Infinity;
+    const pts = [];
+    for (let n = 1; n <= N; n++) {
+      lo = Math.min(lo, a[n], I[n]); hi = Math.max(hi, a[n], S[n]);
+      pts.push({ x: n, y: a[n], r: 3, color: css('--curve', '#2f6fdb') });
+    }
+    const pad = (hi - lo) * 0.1 || 0.5;
+    lsPlot.setView({ xMin: -2, xMax: N + 1, yMin: lo - pad, yMax: hi + pad, equal: false });
+    const step = (arr) => (x) => (x < 0.5 ? NaN : arr[Math.min(N, Math.max(1, Math.round(x)))]);
+    lsPlot.draw(
+      [{ fn: step(S), color: css('--curve-2', '#d9480f'), width: 2 }, { fn: step(I), color: css('--tangent', '#1f8a4c'), width: 2 }],
+      pts,
+      [{ x1: 0, y1: s.sup, x2: N + 1, y2: s.sup }, { x1: 0, y1: s.inf, x2: N + 1, y2: s.inf }]
+    );
+    const out = [
+      '<p>Оранжевая ступенька \\(S_n\\) не возрастает и стремится к ' + tex('\\varlimsup a_n = ' + s.supTex) + ', зелёная \\(I_n\\) не убывает и стремится к ' + tex('\\varliminf a_n = ' + s.infTex) + ' (пунктиры).</p>',
+    ];
+    if (s.sup === s.inf) out.push('<p class="feedback good">Огибающие сходятся к одному числу — значит, последовательность сходится: ' + tex('\\lim a_n = ' + s.supTex) + '.</p>');
+    else out.push('<p>Огибающие сходятся к разным числам, поэтому предела нет. ' + (s.dense ? 'У \\(\\sin n\\) частичные пределы заполняют весь отрезок \\([-1;\\ 1]\\), а не только концы.' : 'Частичные пределы — значения, около которых бесконечно часто оказываются члены.') + '</p>');
+    $('ls-readout').innerHTML = out.join('');
+    renderMath($('ls-readout'));
+  }
+  $('ls-sel').addEventListener('change', lsUpdate);
 
   // ---------- 3. Тренажёр ----------
   const STATS_KEY = 'msh.limits.stats';
@@ -251,6 +293,8 @@
   document.addEventListener('DOMContentLoaded', () => {
     seqUpdate();
     edUpdate();
+    lsUpdate();
+    PairTrainer.mount($('limsup-trainer'), { modes: ['limsup'], statsKey: 'msh.limsup.stats' });
     renderStats();
     newTask();
   });

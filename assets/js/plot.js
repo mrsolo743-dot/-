@@ -125,7 +125,7 @@
         const px = Math.round(this.toPx(x, 0)[0]) + 0.5;
         ctx.moveTo(px, 0); ctx.lineTo(px, this.h);
       }
-      for (const y of ys) {
+      for (const y of this.view.noY ? [] : ys) {
         const py = Math.round(this.toPx(0, y)[1]) + 0.5;
         ctx.moveTo(0, py); ctx.lineTo(this.w, py);
       }
@@ -137,7 +137,7 @@
       ctx.lineWidth = 1.5;
       ctx.beginPath();
       ctx.moveTo(0, oy); ctx.lineTo(this.w, oy);
-      ctx.moveTo(ox, 0); ctx.lineTo(ox, this.h);
+      if (!this.view.noY) { ctx.moveTo(ox, 0); ctx.lineTo(ox, this.h); }
       ctx.stroke();
 
       // Подписи делений (прижимаются к краю, если ось за пределами экрана)
@@ -153,7 +153,7 @@
       ctx.textAlign = 'right';
       ctx.textBaseline = 'middle';
       const labelX = Math.min(Math.max(ox - 4, 30), this.w - 2);
-      for (const y of ys) {
+      for (const y of this.view.noY ? [] : ys) {
         if (Math.abs(y) < stepY / 2) continue;
         ctx.fillText(fmtTick(y), labelX, this.toPx(0, y)[1]);
       }
@@ -162,8 +162,9 @@
       for (const l of this.lines) {
         ctx.save();
         ctx.strokeStyle = l.color || axis;
-        ctx.lineWidth = 1.5;
-        ctx.setLineDash(l.dash || [6, 5]);
+        ctx.lineWidth = l.width || 1.5;
+        ctx.lineCap = l.width ? 'round' : 'butt';
+        ctx.setLineDash(l.solid ? [] : l.dash || [6, 5]);
         ctx.beginPath();
         const [x1, y1] = this.toPx(l.x1, l.y1);
         const [x2, y2] = this.toPx(l.x2, l.y2);

@@ -21,14 +21,15 @@
     <p class="lead">Математический анализ, 1 семестр. Центральное понятие анализа: от интуиции «стремится к» до строгого определения, с которым можно доказывать теоремы.</p>
     <p class="tracks">
       <span class="track math">Математика — всё, включая доказательства</span>
-      <span class="track tech">Техника — §1, 2, 5–7</span>
-      <span class="track econ">Экономика — §1, 5 (вычисление), 6</span>
+      <span class="track tech">Техника — §1, 2, 5–8</span>
+      <span class="track econ">Экономика — §1, 6 (вычисление), 7</span>
     </p>
 
     <ul class="toc">
       <li><a href="#seq">Предел последовательности</a></li>
       <li><a href="#proof">Доказательство по определению</a></li>
       <li><a href="#theorems">Теоремы</a></li>
+      <li><a href="#limsup">lim sup и lim inf</a></li>
       <li><a href="#func">Предел функции</a></li>
       <li><a href="#remarkable">Замечательные пределы</a></li>
       <li><a href="#applications">Приложения</a></li>
@@ -145,8 +146,57 @@
       <p>Ценность критерия: он позволяет доказать сходимость, <b>не зная самого предела</b>. Это незаменимо для рядов и для численных методов.</p>
     </details>
 
-    <!-- 4. Функции -->
-    <h2 id="func">4. Предел функции: ε и δ</h2>
+    <!-- 4. Верхний и нижний пределы -->
+    <h2 id="limsup">4. Частичные пределы. Верхний и нижний пределы <span class="track math">Математика</span></h2>
+    <p>У \((-1)^n\) предела нет, но «точки сгущения» у неё явно есть: \(1\) и \(-1\). Это понятие делается строгим так.</p>
+    <div class="card">
+      <p style="margin-top:0"><b>Частичный предел</b> последовательности — предел какой-нибудь её подпоследовательности \(a_{n_1}, a_{n_2}, \ldots\) (\(n_1 &lt; n_2 &lt; \ldots\)).</p>
+      <p><b>Верхний и нижний пределы</b> — наибольший и наименьший частичные пределы:</p>
+      <p>\[ \varlimsup_{n \to \infty} a_n = \lim_{n \to \infty} \sup_{k \ge n} a_k, \qquad \varliminf_{n \to \infty} a_n = \lim_{n \to \infty} \inf_{k \ge n} a_k. \]</p>
+      <p style="margin-bottom:0">Их также пишут \(\limsup\) и \(\liminf\). В отличие от предела, они существуют <b>всегда</b> (в \(\overline{\mathbb{R}}\), то есть возможно \(\pm\infty\)).</p>
+    </div>
+    <p>Смысл формулы: \(S_n = \sup_{k \ge n} a_k\) — «потолок» хвоста последовательности, начиная с номера \(n\). Отбрасывая начальные члены, мы можем его только опустить, поэтому \(S_n\) не возрастает и имеет предел. Это и есть верхний предел.</p>
+
+    <div class="card">
+      <label>Последовательность:
+        <select id="ls-sel">
+          <option value="0">(−1)ⁿ(1 + 1/n)</option>
+          <option value="1">2·cos(2πn/3) + 1/n</option>
+          <option value="2">(1 + (−1)ⁿ/n)ⁿ</option>
+          <option value="3">sin n</option>
+          <option value="4">(2n + 1)/(n + 3) — сходится</option>
+        </select>
+      </label>
+      <canvas class="plot" id="ls-plot" style="margin-top:12px" aria-label="Последовательность, её верхняя и нижняя огибающие хвостов"></canvas>
+      <div class="legend">
+        <span style="color:var(--curve)">● <span style="color:var(--muted)">\(a_n\)</span></span>
+        <span><i style="background:var(--curve-2)"></i>\(S_n = \sup_{k \ge n} a_k\)</span>
+        <span><i style="background:var(--tangent)"></i>\(I_n = \inf_{k \ge n} a_k\)</span>
+      </div>
+      <div class="readout" id="ls-readout" aria-live="polite"></div>
+    </div>
+
+    <details class="why">
+      <summary>Теорема: предел существует ⟺ \(\varlimsup = \varliminf\)</summary>
+      <p>По определению \(I_n \le a_n \le S_n\). Если \(\varlimsup a_n = \varliminf a_n = L\), то \(S_n \to L\) и \(I_n \to L\), и по теореме о двух милиционерах \(a_n \to L\).</p>
+      <p>Обратно, если \(a_n \to L\), то любая подпоследовательность сходится к \(L\), то есть \(L\) — единственный частичный предел, и наибольший, и наименьший одновременно. \(\blacksquare\)</p>
+    </details>
+    <details class="why">
+      <summary>Рабочее определение \(\varlimsup\) через \(\varepsilon\)</summary>
+      <p>Для конечного \(L\):</p>
+      <p>\[ L = \varlimsup a_n \iff \begin{cases} \forall \varepsilon &gt; 0 \;\; \exists N \;\; \forall n \ge N\colon\; a_n &lt; L + \varepsilon, \\ \forall \varepsilon &gt; 0 \;\; \forall N \;\; \exists n \ge N\colon\; a_n &gt; L - \varepsilon. \end{cases} \]</p>
+      <p>Словами: выше уровня \(L + \varepsilon\) лежит лишь <b>конечное</b> число членов, а выше \(L - \varepsilon\) — <b>бесконечно</b> много. Сравните с определением sup множества: там «конечное число» заменено на «ни одного», а «бесконечно много» — на «хотя бы один».</p>
+    </details>
+    <details class="why">
+      <summary>Почему частичные пределы вообще есть: Больцано — Вейерштрасс</summary>
+      <p>У ограниченной последовательности по теореме Больцано — Вейерштрасса есть сходящаяся подпоследовательность, то есть хотя бы один частичный предел. Более того, \(\varlimsup a_n\) сам является частичным пределом: можно выбрать \(n_1 &lt; n_2 &lt; \ldots\) так, что \(a_{n_k} &gt; S_{n_k} - \frac{1}{k}\) (по определению sup хвоста), и тогда \(a_{n_k} \to \lim S_n\).</p>
+      <p>У \(\sin n\) частичных пределов бесконечно много: это весь отрезок \([-1;\ 1]\) (так как \(\pi\) иррационально, точки \(n \bmod 2\pi\) всюду плотны на окружности).</p>
+    </details>
+    <p>Потренируйтесь (больше задач — в теме <a href="reals.html#practice">«Вещественные числа»</a>, вместе с sup и inf множеств):</p>
+    <div class="card" id="limsup-trainer"></div>
+
+    <!-- 5. Функции -->
+    <h2 id="func">5. Предел функции: ε и δ</h2>
     <p>Для функций роль номера \(N\) играет близость аргумента к точке \(x_0\):</p>
     <div class="card">
       <p style="margin-top:0"><b>По Коши:</b> \[ \begin{aligned} \lim_{x \to x_0} f(x) = L \iff\; & \forall \varepsilon &gt; 0 \;\exists \delta &gt; 0 \;\forall x: \\ & 0 &lt; |x - x_0| &lt; \delta \Rightarrow |f(x) - L| &lt; \varepsilon. \end{aligned} \]</p>
@@ -194,8 +244,8 @@
       </li>
     </ol>
 
-    <!-- 5. Замечательные пределы -->
-    <h2 id="remarkable">5. Замечательные пределы и эквивалентности</h2>
+    <!-- 6. Замечательные пределы -->
+    <h2 id="remarkable">6. Замечательные пределы и эквивалентности</h2>
     <div class="card">
       <p>\[ \lim_{x \to 0} \frac{\sin x}{x} = 1, \qquad \lim_{x \to \infty} \left(1 + \frac{1}{x}\right)^x = \lim_{t \to 0} (1 + t)^{1/t} = e. \]</p>
     </div>
@@ -222,15 +272,15 @@
       <p>Заменять можно <b>множители</b> в произведении и частном. В сумме и разности — нельзя: \(\frac{\operatorname{tg} x - \sin x}{x^3}\). Если заменить оба на \(x\), получится 0, а правильный ответ \(\frac{1}{2}\) (так как \(\operatorname{tg} x - \sin x = \operatorname{tg} x(1 - \cos x) \sim x \cdot \frac{x^2}{2}\)).</p>
     </details>
 
-    <!-- 6. Приложения -->
-    <h2 id="applications">6. Приложения</h2>
+    <!-- 7. Приложения -->
+    <h2 id="applications">7. Приложения</h2>
     <div class="card">
       <p style="margin-top:0"><span class="track tech">Техника</span> <b>Малые углы.</b> Из \(\sin x \sim x\) следует приближение \(\sin x \approx x\) при малых \(x\) (в радианах). Уравнение маятника \(\ddot\varphi + \frac{g}{l}\sin\varphi = 0\) превращается в линейное \(\ddot\varphi + \frac{g}{l}\varphi = 0\), откуда период \(T \approx 2\pi\sqrt{l/g}\). При угле \(10^\circ\) ошибка приближения меньше 0,6%.</p>
       <p style="margin-bottom:0"><span class="track econ">Экономика</span> <b>Непрерывное начисление процентов.</b> Ставка \(r\) годовых, начисление \(n\) раз в год: за год сумма умножается на \(\left(1 + \frac{r}{n}\right)^n\). При \(n \to \infty\) по второму замечательному пределу получаем \(e^r\). Для \(r = 10\%\): раз в год — \(1{,}1\), ежемесячно — \(1{,}1047\), непрерывно — \(e^{0{,}1} \approx 1{,}1052\).</p>
     </div>
 
-    <!-- 7. Тренажёр -->
-    <h2 id="practice">7. Тренажёр</h2>
+    <!-- 8. Тренажёр -->
+    <h2 id="practice">8. Тренажёр</h2>
     <div class="card">
       <div class="row" style="justify-content:space-between">
         <label>Режим:
@@ -280,6 +330,8 @@
   <script src="../assets/js/plot.js"></script>
   <script src="../assets/js/expr.js"></script>
   <script src="../assets/js/limits-core.js"></script>
+  <script src="../assets/js/reals-core.js"></script>
+  <script src="../assets/js/pair-trainer.js"></script>
   <script src="../assets/js/limits.js"></script>
 </body>
 </html>

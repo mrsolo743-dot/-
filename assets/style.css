@@ -268,3 +268,9 @@ button.choice.wrong { border-color: var(--bad); background: var(--bad-soft); }
 
 /* Мелкий поясняющий текст */
 .small-note { display: block; color: var(--muted); font-size: 15px; margin: 6px 0; }
+
+/* Числовая прямая — низкий холст */
+canvas.plot.numline { aspect-ratio: 5 / 2; max-height: 240px; }
+/* Галочка «достигается» в тренажёре sup/inf */
+.attain { font-size: 14px; color: var(--muted); white-space: nowrap; display: inline-flex; gap: 4px; align-items: center; }
+.attain[hidden] { display: none; }
