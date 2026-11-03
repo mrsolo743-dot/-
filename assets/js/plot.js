@@ -74,10 +74,12 @@
       return [(x - f.xMin) * f.sx, this.h - (y - f.yMin) * f.sy];
     }
 
-    draw(curves, points, lines) {
+    // bands: [{ yMin, yMax } | { xMin, xMax }, color?] — закрашенные полосы (ε-коридор, δ-окрестность)
+    draw(curves, points, lines, bands) {
       this.curves = curves || [];
       this.points = points || [];
       this.lines = lines || [];
+      this.bands = bands || [];
       this.redraw();
     }
 
@@ -99,6 +101,21 @@
       for (let x = Math.ceil(fv.xMin / stepX) * stepX; x <= fv.xMax; x += stepX) xs.push(x);
       const ys = [];
       for (let y = Math.ceil(fv.yMin / stepY) * stepY; y <= fv.yMax; y += stepY) ys.push(y);
+
+      // Полосы под сеткой
+      for (const b of this.bands || []) {
+        ctx.save();
+        ctx.fillStyle = b.color || cssVar('--accent-soft', '#e5eefc');
+        ctx.globalAlpha = b.alpha === undefined ? 1 : b.alpha;
+        if (b.yMin !== undefined) {
+          const [, y1] = this.toPx(0, b.yMax), [, y2] = this.toPx(0, b.yMin);
+          ctx.fillRect(0, y1, this.w, y2 - y1);
+        } else {
+          const [x1] = this.toPx(b.xMin, 0), [x2] = this.toPx(b.xMax, 0);
+          ctx.fillRect(x1, 0, x2 - x1, this.h);
+        }
+        ctx.restore();
+      }
 
       // Сетка
       ctx.lineWidth = 1;
@@ -185,8 +202,17 @@
         const [px, py] = this.toPx(p.x, p.y);
         ctx.fillStyle = p.color || cssVar('--text', '#1f2328');
         ctx.beginPath();
-        ctx.arc(px, py, 5, 0, Math.PI * 2);
-        ctx.fill();
+        ctx.arc(px, py, p.r || 5, 0, Math.PI * 2);
+        if (p.hollow) {
+          // «выколотая» точка: функция в ней не определена
+          ctx.save();
+          ctx.fillStyle = cssVar('--surface', '#fff');
+          ctx.fill();
+          ctx.strokeStyle = p.color || cssVar('--text', '#1f2328');
+          ctx.lineWidth = 2;
+          ctx.stroke();
+          ctx.restore();
+        } else ctx.fill();
         if (p.label) {
           ctx.font = '600 13px system-ui, sans-serif';
           ctx.textAlign = px > this.w - 80 ? 'right' : 'left';

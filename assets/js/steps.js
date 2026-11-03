@@ -15,6 +15,7 @@
     const update = () => {
       items.forEach((li, i) => { li.hidden = i >= shown; });
       next.disabled = shown >= items.length;
+      if (window.fitMath) window.fitMath(ol);
     };
     next.addEventListener('click', () => {
       shown = Math.min(shown + 1, items.length);

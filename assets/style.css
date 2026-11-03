@@ -184,7 +184,7 @@ canvas.plot {
 .solution .katex-display { font-size: .95em; }
 .stats { display: flex; gap: 16px; flex-wrap: wrap; font-size: 15px; color: var(--muted); }
 .stats b { color: var(--text); }
-select { font: inherit; font-size: 15px; padding: 6px 10px; border-radius: 10px; border: 1px solid var(--border); background: var(--surface); color: var(--text); }
+select { max-width: 100%; font: inherit; font-size: 15px; padding: 6px 10px; border-radius: 10px; border: 1px solid var(--border); background: var(--surface); color: var(--text); }
 
 .katex-display { margin: 8px 0; overflow-x: auto; overflow-y: hidden; }
 
@@ -227,3 +227,25 @@ footer.site { border-top: 1px solid var(--border); color: var(--muted); font-siz
 .steps-list li { margin: 10px 0; }
 .steps-list .katex-display { margin: 4px 0; font-size: .95em; }
 .steps-list .final { font-weight: 600; }
+
+/* Метки направлений: математика / техника / экономика */
+.tracks { display: flex; flex-wrap: wrap; gap: 6px; margin: 4px 0 8px; }
+.track {
+  display: inline-block; font-size: 12.5px; font-weight: 600; line-height: 1.5;
+  padding: 1px 8px; border-radius: 999px; white-space: nowrap;
+}
+.track.math { background: var(--accent-soft); color: var(--accent); }
+.track.tech { background: var(--good-soft); color: var(--good); }
+.track.econ { background: var(--warn-soft); color: #9a6700; }
+@media (prefers-color-scheme: dark) { .track.econ { color: #f0c463; } }
+.topics .tracks { margin: 6px 0 0; }
+
+/* Фильтр направлений на главной */
+.filter { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0 4px; }
+.filter button[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: #fff; }
+.topics li[hidden], .group[hidden] { display: none; }
+
+/* Таблица численной проверки */
+.num-table { border-collapse: collapse; margin: 8px 0; font-size: 15px; }
+.num-table th, .num-table td { border: 1px solid var(--border); padding: 4px 10px; text-align: right; }
+.num-table th { font-weight: 600; }

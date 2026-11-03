@@ -18,45 +18,61 @@
     <h1>Высшая математика так, будто рядом преподаватель</h1>
     <p class="lead">Каждая тема устроена одинаково: определение и интуиция, вывод формул по шагам с ответом на вопрос «а почему?», интерактивные графики и тренажёр, который проверяет ответ и показывает решение.</p>
 
-    <h3 class="group-title">Математический анализ</h3>
-    <ul class="topics">
-      <li><span class="soon"><span class="tag">1 семестр · скоро</span><span class="title">Пределы</span><span class="desc">Определение, замечательные пределы, эквивалентные бесконечно малые.</span></span></li>
-      <li>
-        <a href="topics/derivative.html">
-          <span class="tag">1 семестр</span>
-          <span class="title">Производная</span>
-          <span class="desc">От секущей к касательной, вывод таблицы и правил, лаборатория: продифференцируйте любую функцию.</span>
-        </a>
-      </li>
-      <li><span class="soon"><span class="tag">1 семестр · скоро</span><span class="title">Исследование функции</span><span class="desc">Монотонность, экстремумы, выпуклость, асимптоты, построение графика.</span></span></li>
-      <li><span class="soon"><span class="tag">1–2 семестр · скоро</span><span class="title">Интегралы</span><span class="desc">Первообразная, замена и по частям, площадь под графиком.</span></span></li>
-      <li><span class="soon"><span class="tag">2 семестр · скоро</span><span class="title">Ряды</span><span class="desc">Признаки сходимости, ряды Тейлора — видно, как многочлен приближает функцию.</span></span></li>
-      <li><span class="soon"><span class="tag">2 семестр · скоро</span><span class="title">Функции нескольких переменных</span><span class="desc">Частные производные, градиент, экстремумы.</span></span></li>
-    </ul>
+    <div class="filter" role="group" aria-label="Направление">
+      <button type="button" data-filter="all" aria-pressed="true">Все темы</button>
+      <button type="button" data-filter="math" aria-pressed="false">Математика</button>
+      <button type="button" data-filter="tech" aria-pressed="false">Техника</button>
+      <button type="button" data-filter="econ" aria-pressed="false">Экономика (база)</button>
+    </div>
+    <p class="task-head" id="filter-note">Основной упор — на математическое направление: строгие определения и доказательства. Метки показывают, кому тема нужна.</p>
 
-    <h3 class="group-title">Линейная алгебра и геометрия</h3>
-    <ul class="topics">
-      <li><span class="soon"><span class="tag">1 семестр · скоро</span><span class="title">Матрицы и определители</span><span class="desc">Действия с матрицами, откуда формула определителя, обратная матрица.</span></span></li>
-      <li><span class="soon"><span class="tag">1 семестр · скоро</span><span class="title">Системы линейных уравнений</span><span class="desc">Метод Гаусса по шагам, правило Крамера, ранг.</span></span></li>
-      <li><span class="soon"><span class="tag">1 семестр · скоро</span><span class="title">Векторы</span><span class="desc">Скалярное, векторное и смешанное произведения с геометрическим смыслом.</span></span></li>
-    </ul>
-
-    <h3 class="group-title">Дальше по программе</h3>
-    <ul class="topics">
-      <li><span class="soon"><span class="tag">2–3 семестр · скоро</span><span class="title">Дифференциальные уравнения</span><span class="desc">Поле направлений, уравнения первого порядка, линейные с постоянными коэффициентами.</span></span></li>
-      <li><span class="soon"><span class="tag">3–4 семестр · скоро</span><span class="title">Теория вероятностей</span><span class="desc">Классическая вероятность, случайные величины, нормальное распределение.</span></span></li>
-    </ul>
-
-    <h3 class="group-title">Повторить школьную базу</h3>
-    <ul class="topics">
-      <li>
-        <a href="topics/quadratic.html">
-          <span class="tag">Школа · 8 класс</span>
-          <span class="title">Квадратные уравнения</span>
-          <span class="desc">Дискриминант, откуда формула корней, парабола и её пересечения с осью Ox.</span>
-        </a>
-      </li>
-    </ul>
+    <section class="group">
+      <h3 class="group-title">Введение: язык математики</h3>
+      <ul class="topics">
+        <li data-tracks="math"><span class="soon"><span class="tag">1 семестр · скоро</span><span class="title">Логика, кванторы и доказательства</span><span class="desc">Как читать ∀ и ∃, строить отрицания, доказывать от противного и по индукции.</span><span class="tracks"><span class="track math">Математика</span></span></span></li>
+        <li data-tracks="math"><span class="soon"><span class="tag">1 семестр · скоро</span><span class="title">Множества и отображения</span><span class="desc">Операции над множествами, инъекции и биекции, мощность: счётные и несчётные.</span><span class="tracks"><span class="track math">Математика</span></span></span></li>
+        <li data-tracks="math"><span class="soon"><span class="tag">1 семестр · скоро</span><span class="title">Вещественные числа</span><span class="desc">Аксиома полноты, sup и inf, почему √2 не рационален.</span><span class="tracks"><span class="track math">Математика</span></span></span></li>
+      </ul>
+    </section>
+    <section class="group">
+      <h3 class="group-title">Математический анализ</h3>
+      <ul class="topics">
+        <li data-tracks="math tech econ"><a href="topics/limits.html"><span class="tag">1 семестр</span><span class="title">Пределы</span><span class="desc">ε–N и ε–δ в интерактиве, доказательства по шагам, теоремы, замечательные пределы, тренажёр.</span><span class="tracks"><span class="track math">Математика</span><span class="track tech">Техника</span><span class="track econ">Экономика</span></span></a></li>
+        <li data-tracks="math tech"><span class="soon"><span class="tag">1 семестр · скоро</span><span class="title">Непрерывность</span><span class="desc">Теоремы Больцано — Коши и Вейерштрасса, разрывы, равномерная непрерывность.</span><span class="tracks"><span class="track math">Математика</span><span class="track tech">Техника</span></span></span></li>
+        <li data-tracks="math tech econ"><a href="topics/derivative.html"><span class="tag">1 семестр</span><span class="title">Производная</span><span class="desc">От секущей к касательной, вывод таблицы и правил, теоремы Ферма, Ролля, Лагранжа, лаборатория.</span><span class="tracks"><span class="track math">Математика</span><span class="track tech">Техника</span><span class="track econ">Экономика</span></span></a></li>
+        <li data-tracks="math tech"><span class="soon"><span class="tag">1 семестр · скоро</span><span class="title">Формула Тейлора</span><span class="desc">Как многочлен приближает функцию, остаток, вычисление пределов.</span><span class="tracks"><span class="track math">Математика</span><span class="track tech">Техника</span></span></span></li>
+        <li data-tracks="math tech econ"><span class="soon"><span class="tag">1 семестр · скоро</span><span class="title">Исследование функции</span><span class="desc">Монотонность, экстремумы, выпуклость, асимптоты, построение графика.</span><span class="tracks"><span class="track math">Математика</span><span class="track tech">Техника</span><span class="track econ">Экономика</span></span></span></li>
+        <li data-tracks="math tech econ"><span class="soon"><span class="tag">1–2 семестр · скоро</span><span class="title">Интеграл</span><span class="desc">Интеграл Римана, Ньютон — Лейбниц, замена и по частям, несобственные интегралы.</span><span class="tracks"><span class="track math">Математика</span><span class="track tech">Техника</span><span class="track econ">Экономика</span></span></span></li>
+        <li data-tracks="math tech"><span class="soon"><span class="tag">2 семестр · скоро</span><span class="title">Ряды</span><span class="desc">Признаки сходимости, абсолютная и условная, степенные ряды и ряд Тейлора.</span><span class="tracks"><span class="track math">Математика</span><span class="track tech">Техника</span></span></span></li>
+        <li data-tracks="math tech econ"><span class="soon"><span class="tag">2–3 семестр · скоро</span><span class="title">Функции нескольких переменных</span><span class="desc">Дифференцируемость, градиент, экстремумы, кратные интегралы.</span><span class="tracks"><span class="track math">Математика</span><span class="track tech">Техника</span><span class="track econ">Экономика</span></span></span></li>
+      </ul>
+    </section>
+    <section class="group">
+      <h3 class="group-title">Алгебра и геометрия</h3>
+      <ul class="topics">
+        <li data-tracks="math tech econ"><span class="soon"><span class="tag">1 семестр · скоро</span><span class="title">Матрицы и определители</span><span class="desc">Откуда формула определителя, его свойства, обратная матрица.</span><span class="tracks"><span class="track math">Математика</span><span class="track tech">Техника</span><span class="track econ">Экономика</span></span></span></li>
+        <li data-tracks="math tech econ"><span class="soon"><span class="tag">1 семестр · скоро</span><span class="title">Системы линейных уравнений</span><span class="desc">Метод Гаусса по шагам, ранг, теорема Кронекера — Капелли.</span><span class="tracks"><span class="track math">Математика</span><span class="track tech">Техника</span><span class="track econ">Экономика</span></span></span></li>
+        <li data-tracks="math tech"><span class="soon"><span class="tag">1 семестр · скоро</span><span class="title">Векторы и аналитическая геометрия</span><span class="desc">Скалярное, векторное и смешанное произведения, прямые и плоскости.</span><span class="tracks"><span class="track math">Математика</span><span class="track tech">Техника</span></span></span></li>
+        <li data-tracks="math"><span class="soon"><span class="tag">1–2 семестр · скоро</span><span class="title">Линейные пространства и отображения</span><span class="desc">Базис и размерность, матрица оператора, ядро и образ.</span><span class="tracks"><span class="track math">Математика</span></span></span></li>
+        <li data-tracks="math tech"><span class="soon"><span class="tag">2 семестр · скоро</span><span class="title">Собственные значения и векторы</span><span class="desc">Диагонализация, жорданова форма, квадратичные формы.</span><span class="tracks"><span class="track math">Математика</span><span class="track tech">Техника</span></span></span></li>
+        <li data-tracks="math"><span class="soon"><span class="tag">2–3 семестр · скоро</span><span class="title">Группы, кольца, поля</span><span class="desc">Основные алгебраические структуры и примеры.</span><span class="tracks"><span class="track math">Математика</span></span></span></li>
+      </ul>
+    </section>
+    <section class="group">
+      <h3 class="group-title">Дальше по программе</h3>
+      <ul class="topics">
+        <li data-tracks="math tech"><span class="soon"><span class="tag">2–3 семестр · скоро</span><span class="title">Дифференциальные уравнения</span><span class="desc">Поле направлений, существование и единственность, линейные уравнения.</span><span class="tracks"><span class="track math">Математика</span><span class="track tech">Техника</span></span></span></li>
+        <li data-tracks="math tech econ"><span class="soon"><span class="tag">3–4 семестр · скоро</span><span class="title">Теория вероятностей</span><span class="desc">Вероятностное пространство, случайные величины, предельные теоремы.</span><span class="tracks"><span class="track math">Математика</span><span class="track tech">Техника</span><span class="track econ">Экономика</span></span></span></li>
+        <li data-tracks="math tech"><span class="soon"><span class="tag">3–4 семестр · скоро</span><span class="title">Комплексный анализ</span><span class="desc">Голоморфные функции, вычеты и их применение к интегралам.</span><span class="tracks"><span class="track math">Математика</span><span class="track tech">Техника</span></span></span></li>
+        <li data-tracks="math"><span class="soon"><span class="tag">1–2 семестр · скоро</span><span class="title">Дискретная математика</span><span class="desc">Комбинаторика, графы, рекуррентные соотношения.</span><span class="tracks"><span class="track math">Математика</span></span></span></li>
+      </ul>
+    </section>
+    <section class="group">
+      <h3 class="group-title">Повторить школьную базу</h3>
+      <ul class="topics">
+        <li data-tracks="math tech econ"><a href="topics/quadratic.html"><span class="tag">Школа · 8 класс</span><span class="title">Квадратные уравнения</span><span class="desc">Дискриминант, откуда формула корней, парабола и её пересечения с осью Ox.</span><span class="tracks"><span class="track math">Математика</span><span class="track tech">Техника</span><span class="track econ">Экономика</span></span></a></li>
+      </ul>
+    </section>
 
     <h2>Как заниматься</h2>
     <div class="card">
@@ -65,11 +81,39 @@
         <li>Подвигайте ползунки на графике и посмотрите, как формула связана с картинкой. В лаборатории можно ввести свою функцию.</li>
         <li>Решите несколько задач в тренажёре. Ошиблись? Нажмите «Показать решение»: там разбор по шагам.</li>
       </ol>
+      <p style="margin-bottom:0"><span class="track math">Математика</span> — разбирайте доказательства и строгие определения целиком. <span class="track tech">Техника</span> — упор на вычисления и приложения. <span class="track econ">Экономика</span> — достаточно вычислительной части и раздела «Приложения».</p>
     </div>
   </main>
 
   <footer class="site">
     <div class="wrap">Прогресс в тренажёре хранится только в вашем браузере.</div>
   </footer>
+  <script>
+    // Фильтр тем по направлению; выбор запоминается в браузере
+    (function () {
+      const buttons = document.querySelectorAll('[data-filter]');
+      const notes = {
+        all: 'Основной упор — на математическое направление: строгие определения и доказательства. Метки показывают, кому тема нужна.',
+        math: 'Полная программа с доказательствами: от логики и вещественных чисел до алгебраических структур.',
+        tech: 'Темы, нужные инженеру: вычисления, приложения, дифференциальные уравнения.',
+        econ: 'Только база: пределы, производная, интеграл, матрицы и вероятность — в объёме вычислений и приложений.',
+      };
+      function apply(f) {
+        buttons.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.filter === f)));
+        document.querySelectorAll('.topics li').forEach((li) => {
+          li.hidden = f !== 'all' && !li.dataset.tracks.split(' ').includes(f);
+        });
+        document.querySelectorAll('.group').forEach((g) => {
+          g.hidden = !g.querySelector('li:not([hidden])');
+        });
+        document.getElementById('filter-note').textContent = notes[f];
+        try { localStorage.setItem('msh.filter', f); } catch (e) { /* ничего */ }
+      }
+      buttons.forEach((b) => b.addEventListener('click', () => apply(b.dataset.filter)));
+      let saved = 'all';
+      try { saved = localStorage.getItem('msh.filter') || 'all'; } catch (e) { /* ничего */ }
+      apply(notes[saved] ? saved : 'all');
+    })();
+  </script>
 </body>
 </html>
