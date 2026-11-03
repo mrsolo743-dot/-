@@ -292,3 +292,12 @@ canvas.arrows { display: block; width: 100%; max-width: 460px; height: 240px; ma
 .cantor .diag { background: var(--warn-soft); font-weight: 700; border-radius: 3px; }
 .cantor .diag.new { background: var(--good-soft); color: var(--good); }
 .cantor tr.new th, .cantor tr.new td { border-top: 2px solid var(--text); }
+
+/* Элементы сетки не должны растягиваться шире экрана из-за длинной формулы:
+   по умолчанию у grid-элементов min-width: auto, и они растут по содержимому */
+.table-list > li, .venn-row > figure, .topics > li, .choices > * { min-width: 0; }
+/* Подпись с выпадающим списком сжимается вместе со списком */
+.row > label { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 6px; max-width: 100%; min-width: 0; }
+.row > label select { min-width: 0; max-width: 100%; text-overflow: ellipsis; }
+/* Длинные многочлены — строчной формулой покрупнее, с переносами */
+p.poly { font-size: 1.12em; line-height: 2; text-align: center; }

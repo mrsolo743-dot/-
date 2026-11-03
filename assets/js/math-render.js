@@ -52,5 +52,13 @@
   // Раскрыли «Почему?» — подгоняем формулы внутри
   document.addEventListener('toggle', (e) => { if (e.target.open) fitMath(e.target); }, true);
   let resizeTimer = null;
-  window.addEventListener('resize', () => { clearTimeout(resizeTimer); resizeTimer = setTimeout(() => fitMath(document), 150); });
+  // Пересчитываем только при изменении ширины: на телефоне resize приходит и при прокрутке
+  // (прячется адресная строка), и сброс размеров формул заставлял страницу «прыгать»
+  let lastWidth = window.innerWidth;
+  window.addEventListener('resize', () => {
+    if (window.innerWidth === lastWidth) return;
+    lastWidth = window.innerWidth;
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(() => fitMath(document), 150);
+  });
 })(window);
