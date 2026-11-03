@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Квадратные уравнения</title>
+  <meta name="description" content="Квадратные уравнения: откуда берётся формула корней и дискриминант, интерактивная парабола и тренажёр с пошаговыми решениями.">
+  <link rel="stylesheet" href="../vendor/katex/katex.min.css">
+  <link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+  <header class="site">
+    <div class="wrap">
+      <a class="logo" href="../index.html">Математика по шагам</a>
+      <nav><a href="../index.html">Все темы</a></nav>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <h1>Квадратные уравнения</h1>
+    <p class="lead">Разбираемся, откуда берётся формула корней, почему всё решает дискриминант и как это видно на графике.</p>
+
+    <ul class="toc">
+      <li><a href="#what">Что это</a></li>
+      <li><a href="#derive">Откуда формула</a></li>
+      <li><a href="#discriminant">Дискриминант</a></li>
+      <li><a href="#graph">График</a></li>
+      <li><a href="#special">Неполные уравнения</a></li>
+      <li><a href="#practice">Тренажёр</a></li>
+    </ul>
+
+    <!-- 1. Определение -->
+    <h2 id="what">1. Что такое квадратное уравнение</h2>
+    <p>Квадратное уравнение — это уравнение вида</p>
+    <p>\[ ax^2 + bx + c = 0, \quad a \ne 0. \]</p>
+    <p>Здесь \(x\) — неизвестное, а \(a\), \(b\), \(c\) — обычные числа (коэффициенты). Например, в уравнении \(2x^2 - 3x + 1 = 0\): \(a = 2\), \(b = -3\), \(c = 1\).</p>
+
+    <details class="why">
+      <summary>Почему обязательно \(a \ne 0\)?</summary>
+      <p>Если \(a = 0\), слагаемое \(ax^2\) исчезает и остаётся \(bx + c = 0\). Это уже линейное уравнение: у него нет \(x^2\), и решается оно проще. Слово «квадратное» как раз означает, что в уравнении есть \(x^2\).</p>
+    </details>
+
+    <details class="why">
+      <summary>Что значит «решить уравнение»?</summary>
+      <p>Найти все такие числа \(x\), которые при подстановке превращают уравнение в верное равенство. Например, \(x = 1\) — корень уравнения \(2x^2 - 3x + 1 = 0\), потому что \(2 \cdot 1 - 3 \cdot 1 + 1 = 0\).</p>
+    </details>
+
+    <!-- 2. Вывод формулы -->
+    <h2 id="derive">2. Откуда берётся формула корней</h2>
+    <p>Формулу не нужно заучивать вслепую: её можно получить самому за 7 шагов. Идея одна: собрать в левой части <b>полный квадрат</b> \((x + m)^2\), а дальше просто извлечь корень.</p>
+
+    <ol class="steps" id="derivation">
+      <li>
+        <div class="formula">\[ x^2 + \frac{b}{a}x + \frac{c}{a} = 0 \]</div>
+        <div class="why-line">Делим обе части на \(a\). Так можно, потому что \(a \ne 0\), а деление обеих частей на одно и то же число корни не меняет. Зато теперь перед \(x^2\) стоит единица.</div>
+      </li>
+      <li hidden>
+        <div class="formula">\[ x^2 + \frac{b}{a}x = -\frac{c}{a} \]</div>
+        <div class="why-line">Переносим свободный член вправо (со сменой знака). Слева остаются только слагаемые с \(x\).</div>
+      </li>
+      <li hidden>
+        <div class="formula">\[ x^2 + 2\cdot\frac{b}{2a}\cdot x + \left(\frac{b}{2a}\right)^2 = \left(\frac{b}{2a}\right)^2 - \frac{c}{a} \]</div>
+        <div class="why-line">Вспоминаем \((x + m)^2 = x^2 + 2mx + m^2\). У нас «\(2m\)» равно \(\frac{b}{a}\), значит \(m = \frac{b}{2a}\). Не хватает только \(m^2\), поэтому прибавляем его к обеим частям.</div>
+        <details class="why">
+          <summary>Почему так можно?</summary>
+          <p>Если к обеим частям равенства прибавить одно и то же число, равенство останется верным. Мы ничего не «придумываем», а просто дописываем то, чего не хватает до формулы квадрата суммы.</p>
+        </details>
+      </li>
+      <li hidden>
+        <div class="formula">\[ \left(x + \frac{b}{2a}\right)^2 = \frac{b^2 - 4ac}{4a^2} \]</div>
+        <div class="why-line">Слева сворачиваем квадрат суммы. Справа приводим к общему знаменателю \(4a^2\): \(\frac{b^2}{4a^2} - \frac{c}{a} = \frac{b^2}{4a^2} - \frac{4ac}{4a^2}\).</div>
+      </li>
+      <li hidden>
+        <div class="formula">\[ D = b^2 - 4ac \]</div>
+        <div class="why-line">Числитель справа так важен, что ему дали имя — <b>дискриминант</b> (от лат. discriminare — «различать»). Знаменатель \(4a^2\) всегда положителен, поэтому знак правой части совпадает со знаком \(D\).</div>
+        <details class="why">
+          <summary>А если \(D &lt; 0\)?</summary>
+          <p>Тогда справа отрицательное число, а слева квадрат, который никогда не бывает отрицательным. Равенство невозможно, значит действительных корней нет.</p>
+        </details>
+      </li>
+      <li hidden>
+        <div class="formula">\[ x + \frac{b}{2a} = \pm\frac{\sqrt{D}}{2a} \]</div>
+        <div class="why-line">Извлекаем корень из обеих частей (при \(D \ge 0\)).</div>
+        <details class="why">
+          <summary>Откуда взялся знак «±»?</summary>
+          <p>Квадрат «забывает» знак: \(3^2 = 9\) и \((-3)^2 = 9\). Поэтому если \(t^2 = 9\), то \(t = 3\) или \(t = -3\). Здесь то же самое: выражение в скобках может быть как положительным, так и отрицательным.</p>
+        </details>
+      </li>
+      <li hidden>
+        <div class="formula">\[ x_{1,2} = \frac{-b \pm \sqrt{D}}{2a} \]</div>
+        <div class="why-line">Переносим \(\frac{b}{2a}\) вправо — получаем формулу корней. Всё, она выведена!</div>
+      </li>
+    </ol>
+    <div class="row">
+      <button class="primary" id="next-step">Следующий шаг</button>
+      <button id="all-steps">Показать все шаги</button>
+      <button id="reset-steps">Сначала</button>
+    </div>
+
+    <!-- 3. Дискриминант -->
+    <h2 id="discriminant">3. Дискриминант решает всё</h2>
+    <p>Из вывода видно: количество корней зависит только от знака \(D = b^2 - 4ac\).</p>
+    <div class="card">
+      <p><b>\(D &gt; 0\)</b> — два разных корня: \(x_1 = \frac{-b + \sqrt{D}}{2a}\), \(x_2 = \frac{-b - \sqrt{D}}{2a}\).</p>
+      <p><b>\(D = 0\)</b> — один корень (два совпавших): \(x = -\frac{b}{2a}\).</p>
+      <p><b>\(D &lt; 0\)</b> — действительных корней нет.</p>
+    </div>
+    <details class="why">
+      <summary>Почему при \(D = 0\) корень один?</summary>
+      <p>Потому что \(\pm\sqrt{0} = \pm 0 = 0\): прибавить ноль и отнять ноль — одно и то же. Обе ветки формулы дают одно и то же число \(-\frac{b}{2a}\).</p>
+    </details>
+
+    <!-- 4. График -->
+    <h2 id="graph">4. Посмотрим на графике</h2>
+    <p>Корни уравнения \(ax^2 + bx + c = 0\) — это точки, где парабола \(y = ax^2 + bx + c\) пересекает ось \(Ox\) (там \(y = 0\)). Двигайте ползунки и следите за дискриминантом.</p>
+
+    <div class="card">
+      <div class="graph-wrap">
+        <canvas class="plot" id="plot" aria-label="График параболы y = ax² + bx + c"></canvas>
+      </div>
+      <div class="sliders">
+        <div class="slider"><label for="sa">\(a\)</label><input type="range" id="sa" min="-3" max="3" step="0.5" value="1"><output id="oa">1</output></div>
+        <div class="slider"><label for="sb">\(b\)</label><input type="range" id="sb" min="-10" max="10" step="1" value="-2"><output id="ob">-2</output></div>
+        <div class="slider"><label for="sc">\(c\)</label><input type="range" id="sc" min="-10" max="10" step="1" value="-3"><output id="oc">-3</output></div>
+      </div>
+      <div class="row" style="margin-top:10px">
+        <button data-preset="1,-2,-3">Два корня</button>
+        <button data-preset="1,-4,4">Один корень</button>
+        <button data-preset="1,2,3">Нет корней</button>
+        <button data-preset="-1,0,4">Ветви вниз</button>
+      </div>
+      <div class="readout" id="readout" aria-live="polite"></div>
+    </div>
+
+    <details class="why">
+      <summary>Почему вершина параболы находится в \(x = -\frac{b}{2a}\)?</summary>
+      <p>Посмотрите на формулу корней: \(x_{1,2} = -\frac{b}{2a} \pm \frac{\sqrt{D}}{2a}\). Корни стоят симметрично относительно точки \(-\frac{b}{2a}\), на одинаковом расстоянии от неё. А парабола симметрична относительно вертикали через вершину. Значит, эта точка и есть \(x\)-координата вершины.</p>
+    </details>
+
+    <!-- 5. Неполные -->
+    <h2 id="special">5. Неполные уравнения: можно быстрее</h2>
+    <p>Если \(b = 0\) или \(c = 0\), дискриминант не нужен.</p>
+    <div class="card">
+      <h3>\(c = 0\): \(ax^2 + bx = 0\)</h3>
+      <p>Выносим \(x\) за скобку: \(x(ax + b) = 0\). Произведение равно нулю, когда хотя бы один множитель равен нулю: \(x = 0\) или \(x = -\frac{b}{a}\).</p>
+      <h3>\(b = 0\): \(ax^2 + c = 0\)</h3>
+      <p>\(x^2 = -\frac{c}{a}\). Если справа положительное число, то \(x = \pm\sqrt{-\frac{c}{a}}\); если отрицательное — корней нет.</p>
+    </div>
+    <details class="why">
+      <summary>Как быстро проверить ответ? (теорема Виета)</summary>
+      <p>Если корни \(x_1\), \(x_2\) существуют, то \(x_1 + x_2 = -\frac{b}{a}\) и \(x_1 \cdot x_2 = \frac{c}{a}\). Это видно, если сложить и перемножить две формулы корней. Например, для \(x^2 - 5x + 6 = 0\): \(2 + 3 = 5\), \(2 \cdot 3 = 6\) — корни 2 и 3 верны.</p>
+    </details>
+
+    <!-- 6. Тренажёр -->
+    <h2 id="practice">6. Тренажёр</h2>
+    <div class="card">
+      <div class="row" style="justify-content:space-between">
+        <label>Уровень:
+          <select id="level">
+            <option value="1">1 — неполные уравнения</option>
+            <option value="2" selected>2 — полные, целые корни</option>
+            <option value="3">3 — любые случаи</option>
+          </select>
+        </label>
+        <div class="stats" id="stats"></div>
+      </div>
+
+      <div class="task-eq" id="task-eq"></div>
+
+      <form class="answer-row" id="answer-form" autocomplete="off">
+        <input id="answer" inputmode="text" placeholder="Например: 2; -3  или  нет" aria-label="Ваш ответ">
+        <button class="primary" type="submit">Проверить</button>
+        <button type="button" id="hint-btn">Подсказка</button>
+        <button type="button" id="solution-btn">Показать решение</button>
+        <button type="button" id="to-graph-btn">На графике</button>
+        <button type="button" id="new-task-btn">Новая задача</button>
+      </form>
+      <p class="task-head">Корни пишите через точку с запятой. Дробь можно так: 3/2 или 1,5. Если корней нет, напишите «нет».</p>
+
+      <div class="feedback" id="feedback" aria-live="polite"></div>
+      <div class="solution" id="solution"></div>
+    </div>
+  </main>
+
+  <footer class="site">
+    <div class="wrap">Прогресс в тренажёре хранится только в вашем браузере.</div>
+  </footer>
+
+  <script src="../vendor/katex/katex.min.js"></script>
+  <script src="../vendor/katex/contrib/auto-render.min.js"></script>
+  <script src="../assets/js/math-render.js"></script>
+  <script src="../assets/js/plot.js"></script>
+  <script src="../assets/js/quadratic-core.js"></script>
+  <script src="../assets/js/quadratic.js"></script>
+</body>
+</html>
