@@ -21,7 +21,7 @@
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-theme="light"]) {
     --bg: #15171b;
     --surface: #1d2026;
     --surface-2: #262a31;
@@ -40,7 +40,29 @@
     --tangent: #4cc282;
     --grid: #2a2e35;
     --axis: #6d737d;
+    color-scheme: dark;
   }
+}
+:root[data-theme="dark"] {
+  --bg: #15171b;
+  --surface: #1d2026;
+  --surface-2: #262a31;
+  --text: #e8e9ec;
+  --muted: #a2a8b3;
+  --border: #353a43;
+  --accent: #6ea0ff;
+  --accent-soft: #1f2c44;
+  --good: #4cc282;
+  --good-soft: #17301f;
+  --bad: #ff7b6b;
+  --bad-soft: #3a1f1c;
+  --warn-soft: #3a3220;
+  --curve: #6ea0ff;
+  --curve-2: #ff9a5c;
+  --tangent: #4cc282;
+  --grid: #2a2e35;
+  --axis: #6d737d;
+  color-scheme: dark;
 }
 
 * { box-sizing: border-box; }
@@ -237,7 +259,8 @@ footer.site { border-top: 1px solid var(--border); color: var(--muted); font-siz
 .track.math { background: var(--accent-soft); color: var(--accent); }
 .track.tech { background: var(--good-soft); color: var(--good); }
 .track.econ { background: var(--warn-soft); color: #9a6700; }
-@media (prefers-color-scheme: dark) { .track.econ { color: #f0c463; } }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .track.econ { color: #f0c463; } }
+:root[data-theme="dark"] .track.econ { color: #f0c463; }
 .topics .tracks { margin: 6px 0 0; }
 
 /* Фильтр направлений на главной */
