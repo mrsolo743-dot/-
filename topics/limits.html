@@ -1,0 +1,339 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Пределы</title>
+  <meta name="description" content="Пределы последовательностей и функций: строгие определения на языке ε–N и ε–δ, доказательства по шагам, теоремы, замечательные пределы и тренажёр.">
+  <link rel="stylesheet" href="../vendor/katex/katex.min.css">
+  <link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+  <header class="site">
+    <div class="wrap">
+      <a class="logo" href="../index.html">Математика по шагам</a>
+      <nav><a href="../index.html">Все темы</a></nav>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <h1>Пределы</h1>
+    <p class="lead">Математический анализ, 1 семестр. Центральное понятие анализа: от интуиции «стремится к» до строгого определения, с которым можно доказывать теоремы.</p>
+    <p class="tracks">
+      <span class="track math">Математика — всё, включая доказательства</span>
+      <span class="track tech">Техника — §1, 2, 5–8</span>
+      <span class="track econ">Экономика — §1, 6 (вычисление), 7</span>
+    </p>
+
+    <ul class="toc">
+      <li><a href="#seq">Предел последовательности</a></li>
+      <li><a href="#proof">Доказательство по определению</a></li>
+      <li><a href="#theorems">Теоремы</a></li>
+      <li><a href="#limsup">lim sup и lim inf</a></li>
+      <li><a href="#func">Предел функции</a></li>
+      <li><a href="#remarkable">Замечательные пределы</a></li>
+      <li><a href="#applications">Приложения</a></li>
+      <li><a href="#practice">Тренажёр</a></li>
+    </ul>
+
+    <!-- 1. Последовательности -->
+    <h2 id="seq">1. Предел последовательности: от интуиции к определению</h2>
+    <p>Интуитивно: \(a_n \to a\), если члены последовательности «становятся сколь угодно близки» к \(a\). Но что значит «сколь угодно»? Сделаем это проверяемым. Выберем допуск \(\varepsilon &gt; 0\) — ширину коридора вокруг \(a\). Предел равен \(a\), если для <b>любого</b> коридора, начиная с некоторого номера \(N\), <b>все</b> члены попадают внутрь.</p>
+
+    <div class="card">
+      <p style="margin-top:0">\[ \begin{aligned} \lim_{n \to \infty} a_n = a \iff\; & \forall \varepsilon &gt; 0 \;\; \exists N \in \mathbb{N} \\ & \forall n \ge N: \;\; |a_n - a| &lt; \varepsilon. \end{aligned} \]</p>
+    </div>
+
+    <div class="card">
+      <label>Последовательность:
+        <select id="seq-sel">
+          <option value="0">1/n → 0</option>
+          <option value="1" selected>(2n + 1)/(n + 3) → 2</option>
+          <option value="2">(−1)ⁿ/n → 0</option>
+          <option value="3">sin(n)/n → 0</option>
+          <option value="4">(1 + 1/n)ⁿ → e</option>
+          <option value="5">(−1)ⁿ: предела нет</option>
+        </select>
+      </label>
+      <canvas class="plot" id="seq-plot" style="margin-top:12px" aria-label="Члены последовательности и ε-коридор"></canvas>
+      <div class="legend">
+        <span><i style="background:var(--accent-soft);height:10px"></i>ε-коридор</span>
+        <span style="color:var(--bad)">● <span style="color:var(--muted)">вне коридора</span></span>
+        <span style="color:var(--curve)">● <span style="color:var(--muted)">внутри</span></span>
+      </div>
+      <div class="sliders">
+        <div class="slider"><label for="seq-eps">\(\varepsilon\)</label><input type="range" id="seq-eps" min="0" max="100" value="30"><output id="seq-eps-out"></output></div>
+      </div>
+      <div class="readout" id="seq-readout" aria-live="polite"></div>
+    </div>
+
+    <p class="small-note">Если кванторы \(\forall\), \(\exists\) пока непривычны, загляните в тему <a href="logic.html#quantifiers">«Логика, кванторы и доказательства»</a>: там есть тренажёр на построение отрицаний.</p>
+
+    <details class="why">
+      <summary>Почему сначала «для любого ε», а потом «существует N»? Порядок важен?</summary>
+      <p>Очень важен. Запись \(\forall \varepsilon\, \exists N\) значит: <b>N можно подбирать под ε</b>. Чем уже коридор, тем дальше обычно приходится идти, и это нормально: на графике видно, как \(N\) растёт при уменьшении \(\varepsilon\).</p>
+      <p>Если переставить кванторы, \(\exists N\, \forall \varepsilon\), получится, что одно \(N\) подходит сразу для всех коридоров. Тогда при \(n \ge N\) было бы \(|a_n - a| &lt; \varepsilon\) для всех \(\varepsilon &gt; 0\), то есть \(a_n = a\) — последовательность была бы постоянной с какого-то места. Это совсем другое (и гораздо более жёсткое) условие.</p>
+    </details>
+    <details class="why">
+      <summary>Как записать, что \(a\) — <b>не</b> предел (отрицание определения)?</summary>
+      <p>Правило: \(\forall\) меняется на \(\exists\), \(\exists\) — на \(\forall\), а условие в конце — на противоположное:</p>
+      <p>\[ \begin{aligned} \lim_{n \to \infty} a_n \ne a \iff\; & \exists \varepsilon &gt; 0 \;\; \forall N \in \mathbb{N} \\ & \exists n \ge N: \;\; |a_n - a| \ge \varepsilon. \end{aligned} \]</p>
+      <p>Словами: есть коридор, из которого последовательность выскакивает сколь угодно далеко. Пример: \(a_n = (-1)^n\) и любое \(a\). Возьмём \(\varepsilon = 1\). Соседние члены отстоят друг от друга на 2, поэтому хотя бы один из них отстоит от \(a\) не меньше чем на 1. Значит, для любого \(N\) найдётся \(n \ge N\) с \(|a_n - a| \ge 1\) — предела нет.</p>
+    </details>
+
+    <!-- 2. Доказательство -->
+    <h2 id="proof">2. Доказываем по определению</h2>
+    <p>Докажем, что \(\displaystyle\lim_{n \to \infty} \frac{2n + 1}{n + 3} = 2\). Схема всегда одна: <b>взять произвольное \(\varepsilon\)</b> и <b>предъявить \(N(\varepsilon)\)</b>.</p>
+    <ol class="steps" data-reveal>
+      <li>
+        <div class="formula">\[ \text{Пусть } \varepsilon &gt; 0 \text{ произвольно.} \]</div>
+        <div class="why-line">Мы не выбираем \(\varepsilon\) сами — его «задаёт противник». Доказательство должно работать для любого.</div>
+      </li>
+      <li>
+        <div class="formula">\[ |a_n - 2| = \left|\frac{2n + 1}{n + 3} - 2\right| = \left|\frac{2n + 1 - 2n - 6}{n + 3}\right| = \frac{5}{n + 3} \]</div>
+        <div class="why-line">Упрощаем расстояние до предела: общий знаменатель, раскрыли скобки.</div>
+      </li>
+      <li>
+        <div class="formula">\[ \frac{5}{n + 3} &lt; \varepsilon \iff n + 3 &gt; \frac{5}{\varepsilon} \iff n &gt; \frac{5}{\varepsilon} - 3 \]</div>
+        <div class="why-line">Решаем неравенство относительно \(n\). Это черновик: мы ищем, каким должно быть \(N\).</div>
+      </li>
+      <li>
+        <div class="formula">\[ N(\varepsilon) = \max\left\{1,\ \left[\frac{5}{\varepsilon}\right] - 2\right\} \]</div>
+        <div class="why-line">Предъявляем \(N\). Квадратные скобки — целая часть. Подойдёт и любое большее \(N\): точность «до единицы» не нужна, нужно лишь, чтобы \(N\) существовало.</div>
+      </li>
+      <li>
+        <div class="formula">\[ \forall n \ge N: \;\; n &gt; \frac{5}{\varepsilon} - 3 \;\Rightarrow\; |a_n - 2| = \frac{5}{n + 3} &lt; \varepsilon \qquad \blacksquare \]</div>
+        <div class="why-line">Проверяем: для всех \(n \ge N\) неравенство выполнено. Так как \(\varepsilon\) было произвольным, по определению предел равен 2.</div>
+      </li>
+    </ol>
+    <p class="note">Частая ошибка — начинать с «пусть \(n\) большое». Доказательство начинается с \(\varepsilon\), потом строится \(N\), и только потом рассматриваются \(n \ge N\).</p>
+
+    <!-- 3. Теоремы -->
+    <h2 id="theorems">3. Основные теоремы (с доказательствами)</h2>
+    <details class="why">
+      <summary>Единственность предела</summary>
+      <p><b>Теорема.</b> Последовательность не может иметь двух разных пределов.</p>
+      <p><b>Доказательство.</b> Пусть \(a_n \to a\) и \(a_n \to b\), \(a \ne b\). Возьмём \(\varepsilon = \frac{|a - b|}{2}\): коридоры вокруг \(a\) и \(b\) не пересекаются. Начиная с некоторого \(N_1\) все члены в первом коридоре, с \(N_2\) — во втором. Тогда при \(n \ge \max(N_1, N_2)\) член \(a_n\) лежит в обоих сразу — противоречие. \(\blacksquare\)</p>
+    </details>
+    <details class="why">
+      <summary>Сходящаяся последовательность ограничена</summary>
+      <p><b>Доказательство.</b> Возьмём \(\varepsilon = 1\): при \(n \ge N\) имеем \(|a_n| &lt; |a| + 1\). Членов с номерами меньше \(N\) конечное число. Значит, \(|a_n| \le \max\{|a_1|, \ldots, |a_{N-1}|, |a| + 1\}\) для всех \(n\). \(\blacksquare\)</p>
+      <p>Обратное неверно: \((-1)^n\) ограничена, но не сходится.</p>
+    </details>
+    <details class="why">
+      <summary>Предел суммы (и откуда берётся «ε/2»)</summary>
+      <p><b>Теорема.</b> Если \(a_n \to a\) и \(b_n \to b\), то \(a_n + b_n \to a + b\).</p>
+      <p><b>Доказательство.</b> Пусть \(\varepsilon &gt; 0\). Применим определение к каждой последовательности с допуском \(\frac{\varepsilon}{2}\): при \(n \ge N_1\) \(|a_n - a| &lt; \frac{\varepsilon}{2}\), при \(n \ge N_2\) \(|b_n - b| &lt; \frac{\varepsilon}{2}\). Тогда при \(n \ge \max(N_1, N_2)\) по неравенству треугольника</p>
+      <p>\[ |(a_n + b_n) - (a + b)| \le |a_n - a| + |b_n - b| &lt; \tfrac{\varepsilon}{2} + \tfrac{\varepsilon}{2} = \varepsilon. \;\blacksquare \]</p>
+      <p>Приём «взять \(\frac{\varepsilon}{2}\)» работает, потому что в определении \(\varepsilon\) <b>любое</b>: мы вправе применить его к меньшему числу.</p>
+    </details>
+    <details class="why">
+      <summary>Теорема о двух милиционерах</summary>
+      <p><b>Теорема.</b> Если \(a_n \le b_n \le c_n\) и \(a_n \to L\), \(c_n \to L\), то \(b_n \to L\).</p>
+      <p><b>Доказательство.</b> При \(n \ge N\) обе крайние последовательности лежат в \((L - \varepsilon,\ L + \varepsilon)\). Тогда \(L - \varepsilon &lt; a_n \le b_n \le c_n &lt; L + \varepsilon\). \(\blacksquare\)</p>
+      <p>Пример: \(-\frac{1}{n} \le \frac{\sin n}{n} \le \frac{1}{n}\), поэтому \(\frac{\sin n}{n} \to 0\).</p>
+    </details>
+    <details class="why">
+      <summary>Теорема Вейерштрасса: монотонная ограниченная последовательность сходится</summary>
+      <p><b>Доказательство</b> (для возрастающей). Множество значений \(\{a_n\}\) ограничено сверху, поэтому у него есть точная верхняя грань \(a = \sup a_n\) — это аксиома полноты действительных чисел. Для \(\varepsilon &gt; 0\) число \(a - \varepsilon\) уже не верхняя грань, значит, найдётся \(a_N &gt; a - \varepsilon\). Последовательность возрастает, поэтому при \(n \ge N\): \(a - \varepsilon &lt; a_N \le a_n \le a\). \(\blacksquare\)</p>
+      <p>Именно так доказывают, что \(\left(1 + \frac{1}{n}\right)^n\) сходится: она возрастает и ограничена числом 3. Её предел и называют числом \(e\).</p>
+    </details>
+    <details class="why">
+      <summary>Больцано — Вейерштрасс и критерий Коши (формулировки и идеи)</summary>
+      <p><b>Теорема Больцано — Вейерштрасса.</b> Из любой ограниченной последовательности можно выделить сходящуюся подпоследовательность. <i>Идея:</i> делим отрезок, содержащий все члены, пополам и выбираем половину, где членов бесконечно много; повторяем. Получаем вложенные отрезки, стягивающиеся к точке.</p>
+      <p><b>Критерий Коши.</b> Последовательность сходится тогда и только тогда, когда она фундаментальна:</p>
+      <p>\[ \forall \varepsilon &gt; 0 \;\exists N \;\forall n, m \ge N: \;|a_n - a_m| &lt; \varepsilon. \]</p>
+      <p>Ценность критерия: он позволяет доказать сходимость, <b>не зная самого предела</b>. Это незаменимо для рядов и для численных методов.</p>
+    </details>
+
+    <!-- 4. Верхний и нижний пределы -->
+    <h2 id="limsup">4. Частичные пределы. Верхний и нижний пределы <span class="track math">Математика</span></h2>
+    <p>У \((-1)^n\) предела нет, но «точки сгущения» у неё явно есть: \(1\) и \(-1\). Это понятие делается строгим так.</p>
+    <div class="card">
+      <p style="margin-top:0"><b>Частичный предел</b> последовательности — предел какой-нибудь её подпоследовательности \(a_{n_1}, a_{n_2}, \ldots\) (\(n_1 &lt; n_2 &lt; \ldots\)).</p>
+      <p><b>Верхний и нижний пределы</b> — наибольший и наименьший частичные пределы:</p>
+      <p>\[ \varlimsup_{n \to \infty} a_n = \lim_{n \to \infty} \sup_{k \ge n} a_k, \qquad \varliminf_{n \to \infty} a_n = \lim_{n \to \infty} \inf_{k \ge n} a_k. \]</p>
+      <p style="margin-bottom:0">Их также пишут \(\limsup\) и \(\liminf\). В отличие от предела, они существуют <b>всегда</b> (в \(\overline{\mathbb{R}}\), то есть возможно \(\pm\infty\)).</p>
+    </div>
+    <p>Смысл формулы: \(S_n = \sup_{k \ge n} a_k\) — «потолок» хвоста последовательности, начиная с номера \(n\). Отбрасывая начальные члены, мы можем его только опустить, поэтому \(S_n\) не возрастает и имеет предел. Это и есть верхний предел.</p>
+
+    <div class="card">
+      <label>Последовательность:
+        <select id="ls-sel">
+          <option value="0">(−1)ⁿ(1 + 1/n)</option>
+          <option value="1">2·cos(2πn/3) + 1/n</option>
+          <option value="2">(1 + (−1)ⁿ/n)ⁿ</option>
+          <option value="3">sin n</option>
+          <option value="4">(2n + 1)/(n + 3) — сходится</option>
+        </select>
+      </label>
+      <canvas class="plot" id="ls-plot" style="margin-top:12px" aria-label="Последовательность, её верхняя и нижняя огибающие хвостов"></canvas>
+      <div class="legend">
+        <span style="color:var(--curve)">● <span style="color:var(--muted)">\(a_n\)</span></span>
+        <span><i style="background:var(--curve-2)"></i>\(S_n = \sup_{k \ge n} a_k\)</span>
+        <span><i style="background:var(--tangent)"></i>\(I_n = \inf_{k \ge n} a_k\)</span>
+      </div>
+      <div class="readout" id="ls-readout" aria-live="polite"></div>
+    </div>
+
+    <details class="why">
+      <summary>Теорема: предел существует ⟺ \(\varlimsup = \varliminf\)</summary>
+      <p>По определению \(I_n \le a_n \le S_n\). Если \(\varlimsup a_n = \varliminf a_n = L\), то \(S_n \to L\) и \(I_n \to L\), и по теореме о двух милиционерах \(a_n \to L\).</p>
+      <p>Обратно, если \(a_n \to L\), то любая подпоследовательность сходится к \(L\), то есть \(L\) — единственный частичный предел, и наибольший, и наименьший одновременно. \(\blacksquare\)</p>
+    </details>
+    <details class="why">
+      <summary>Рабочее определение \(\varlimsup\) через \(\varepsilon\)</summary>
+      <p>Для конечного \(L\):</p>
+      <p>\[ L = \varlimsup a_n \iff \begin{cases} \forall \varepsilon &gt; 0 \;\; \exists N \;\; \forall n \ge N\colon\; a_n &lt; L + \varepsilon, \\ \forall \varepsilon &gt; 0 \;\; \forall N \;\; \exists n \ge N\colon\; a_n &gt; L - \varepsilon. \end{cases} \]</p>
+      <p>Словами: выше уровня \(L + \varepsilon\) лежит лишь <b>конечное</b> число членов, а выше \(L - \varepsilon\) — <b>бесконечно</b> много. Сравните с определением sup множества: там «конечное число» заменено на «ни одного», а «бесконечно много» — на «хотя бы один».</p>
+    </details>
+    <details class="why">
+      <summary>Почему частичные пределы вообще есть: Больцано — Вейерштрасс</summary>
+      <p>У ограниченной последовательности по теореме Больцано — Вейерштрасса есть сходящаяся подпоследовательность, то есть хотя бы один частичный предел. Более того, \(\varlimsup a_n\) сам является частичным пределом: можно выбрать \(n_1 &lt; n_2 &lt; \ldots\) так, что \(a_{n_k} &gt; S_{n_k} - \frac{1}{k}\) (по определению sup хвоста), и тогда \(a_{n_k} \to \lim S_n\).</p>
+      <p>У \(\sin n\) частичных пределов бесконечно много: это весь отрезок \([-1;\ 1]\) (так как \(\pi\) иррационально, точки \(n \bmod 2\pi\) всюду плотны на окружности).</p>
+    </details>
+    <p>Потренируйтесь (больше задач — в теме <a href="reals.html#practice">«Вещественные числа»</a>, вместе с sup и inf множеств):</p>
+    <div class="card" id="limsup-trainer"></div>
+
+    <!-- 5. Функции -->
+    <h2 id="func">5. Предел функции: ε и δ</h2>
+    <p>Для функций роль номера \(N\) играет близость аргумента к точке \(x_0\):</p>
+    <div class="card">
+      <p style="margin-top:0"><b>По Коши:</b> \[ \begin{aligned} \lim_{x \to x_0} f(x) = L \iff\; & \forall \varepsilon &gt; 0 \;\exists \delta &gt; 0 \;\forall x: \\ & 0 &lt; |x - x_0| &lt; \delta \Rightarrow |f(x) - L| &lt; \varepsilon. \end{aligned} \]</p>
+      <p><b>По Гейне:</b> для любой последовательности \(x_n \to x_0\), \(x_n \ne x_0\), выполнено \(f(x_n) \to L\).</p>
+      <p style="margin-bottom:0">Эти определения <b>равносильны</b>. Гейне удобно, чтобы доказать, что предела <b>нет</b> (найти две последовательности с разными пределами значений); Коши — чтобы доказать, что предел <b>есть</b>.</p>
+    </div>
+
+    <div class="card">
+      <label>Функция:
+        <select id="ed-sel">
+          <option value="0">3x + 1, x → 1, L = 4</option>
+          <option value="1" selected>x², x → 2, L = 4</option>
+          <option value="2">(x² − 1)/(x − 1), x → 1, L = 2</option>
+          <option value="3">sin(x)/x, x → 0, L = 1</option>
+        </select>
+      </label>
+      <canvas class="plot" id="ed-plot" style="margin-top:12px" aria-label="ε-δ: горизонтальная полоса ε и вертикальная полоса δ"></canvas>
+      <div class="sliders">
+        <div class="slider"><label for="ed-eps">\(\varepsilon\)</label><input type="range" id="ed-eps" min="0" max="100" value="40"><output id="ed-eps-out"></output></div>
+      </div>
+      <div class="readout" id="ed-readout" aria-live="polite"></div>
+    </div>
+    <details class="why">
+      <summary>Почему \(0 &lt; |x - x_0|\), а не просто \(|x - x_0| &lt; \delta\)?</summary>
+      <p>Предел описывает поведение <b>около</b> точки, а не в ней самой. Функция может быть в \(x_0\) не определена (как \(\frac{x^2 - 1}{x - 1}\) в точке 1 — на графике «выколотая» точка) или определена «не так». На предел это не влияет.</p>
+    </details>
+
+    <p>Строгое доказательство того, что \(\lim_{x \to 2} x^2 = 4\):</p>
+    <ol class="steps" data-reveal>
+      <li>
+        <div class="formula">\[ |x^2 - 4| = |x - 2| \cdot |x + 2| \]</div>
+        <div class="why-line">Множитель \(|x - 2|\) мы контролируем через \(\delta\). Мешает \(|x + 2|\): его нужно ограничить.</div>
+      </li>
+      <li>
+        <div class="formula">\[ \delta \le 1 \;\Rightarrow\; 1 &lt; x &lt; 3 \;\Rightarrow\; |x + 2| &lt; 5 \]</div>
+        <div class="why-line">Стандартный приём: заранее договоримся брать \(\delta \le 1\). Тогда \(x\) лежит в \((1;\ 3)\) и \(|x + 2|\) не больше 5.</div>
+      </li>
+      <li>
+        <div class="formula">\[ |x^2 - 4| &lt; 5\,|x - 2| &lt; 5\delta \]</div>
+        <div class="why-line">Теперь вся оценка зависит только от \(\delta\).</div>
+      </li>
+      <li>
+        <div class="formula">\[ \delta = \min\left\{1,\ \frac{\varepsilon}{5}\right\} \;\Rightarrow\; |x^2 - 4| &lt; 5 \cdot \frac{\varepsilon}{5} = \varepsilon \qquad \blacksquare \]</div>
+        <div class="why-line">Минимум нужен, чтобы выполнялись оба условия сразу: и \(\delta \le 1\) (шаг 2), и \(5\delta \le \varepsilon\).</div>
+      </li>
+    </ol>
+
+    <!-- 6. Замечательные пределы -->
+    <h2 id="remarkable">6. Замечательные пределы и эквивалентности</h2>
+    <div class="card">
+      <p>\[ \lim_{x \to 0} \frac{\sin x}{x} = 1, \qquad \lim_{x \to \infty} \left(1 + \frac{1}{x}\right)^x = \lim_{t \to 0} (1 + t)^{1/t} = e. \]</p>
+    </div>
+    <details class="why">
+      <summary>Доказательство первого замечательного предела</summary>
+      <p>Для \(0 &lt; x &lt; \frac{\pi}{2}\) сравним площади на единичной окружности: треугольник внутри сектора, сектор внутри большего треугольника:</p>
+      <p>\[ \frac{1}{2}\sin x &lt; \frac{1}{2} x &lt; \frac{1}{2}\operatorname{tg} x \;\Rightarrow\; \cos x &lt; \frac{\sin x}{x} &lt; 1. \]</p>
+      <p>(Делим на \(\frac{1}{2}\sin x &gt; 0\) и переворачиваем.) При \(x \to 0\) \(\cos x \to 1\), и по теореме о двух милиционерах \(\frac{\sin x}{x} \to 1\). Функция чётная, поэтому то же при \(x \to 0^-\). \(\blacksquare\)</p>
+    </details>
+    <p><b>Таблица эквивалентностей</b> при \(t \to 0\) (запись \(\alpha \sim \beta\) значит \(\frac{\alpha}{\beta} \to 1\)):</p>
+    <div class="card">
+      <p>\[ \sin t \sim t, \quad \operatorname{tg} t \sim t, \]</p>
+      <p>\[ \arcsin t \sim t, \quad \operatorname{arctg} t \sim t, \]</p>
+      <p>\[ e^t - 1 \sim t, \quad \ln(1 + t) \sim t, \]</p>
+      <p>\[ 1 - \cos t \sim \frac{t^2}{2}, \quad (1 + t)^\alpha - 1 \sim \alpha t. \]</p>
+    </div>
+    <details class="why">
+      <summary>Откуда эти эквивалентности?</summary>
+      <p>\(\operatorname{tg} t = \frac{\sin t}{t} \cdot \frac{t}{\cos t}\), отсюда \(\frac{\operatorname{tg} t}{t} \to 1\). \(\ln(1 + t) = \ln (1 + t)^{1/t} \cdot t\), а \((1 + t)^{1/t} \to e\), поэтому \(\frac{\ln(1 + t)}{t} \to \ln e = 1\). Для \(e^t - 1\) сделайте замену \(s = e^t - 1\), тогда \(t = \ln(1 + s)\) и это сводится к предыдущему. \(1 - \cos t = 2 \sin^2 \frac{t}{2} \sim 2 \cdot \frac{t^2}{4}\).</p>
+      <p>Позже, с формулой Тейлора, все они получаются одной строкой: это первые члены разложения.</p>
+    </details>
+    <details class="why">
+      <summary>Когда заменять на эквивалентные <b>нельзя</b></summary>
+      <p>Заменять можно <b>множители</b> в произведении и частном. В сумме и разности — нельзя: \(\frac{\operatorname{tg} x - \sin x}{x^3}\). Если заменить оба на \(x\), получится 0, а правильный ответ \(\frac{1}{2}\) (так как \(\operatorname{tg} x - \sin x = \operatorname{tg} x(1 - \cos x) \sim x \cdot \frac{x^2}{2}\)).</p>
+    </details>
+
+    <!-- 7. Приложения -->
+    <h2 id="applications">7. Приложения</h2>
+    <div class="card">
+      <p style="margin-top:0"><span class="track tech">Техника</span> <b>Малые углы.</b> Из \(\sin x \sim x\) следует приближение \(\sin x \approx x\) при малых \(x\) (в радианах). Уравнение маятника \(\ddot\varphi + \frac{g}{l}\sin\varphi = 0\) превращается в линейное \(\ddot\varphi + \frac{g}{l}\varphi = 0\), откуда период \(T \approx 2\pi\sqrt{l/g}\). При угле \(10^\circ\) ошибка приближения меньше 0,6%.</p>
+      <p style="margin-bottom:0"><span class="track econ">Экономика</span> <b>Непрерывное начисление процентов.</b> Ставка \(r\) годовых, начисление \(n\) раз в год: за год сумма умножается на \(\left(1 + \frac{r}{n}\right)^n\). При \(n \to \infty\) по второму замечательному пределу получаем \(e^r\). Для \(r = 10\%\): раз в год — \(1{,}1\), ежемесячно — \(1{,}1047\), непрерывно — \(e^{0{,}1} \approx 1{,}1052\).</p>
+    </div>
+
+    <!-- 8. Тренажёр -->
+    <h2 id="practice">8. Тренажёр</h2>
+    <div class="card">
+      <div class="row" style="justify-content:space-between">
+        <label>Режим:
+          <select id="mode">
+            <option value="1">Вычислить: ∞/∞ и ∞ − ∞</option>
+            <option value="2">Вычислить: 0/0</option>
+            <option value="3">Вычислить: замечательные и эквивалентности</option>
+            <option value="4">Вычислить: второй замечательный</option>
+            <option value="5">Вычислить: всё вперемешку</option>
+            <option value="N">Строго: найдите N(ε)</option>
+          </select>
+        </label>
+        <div class="stats" id="stats"></div>
+      </div>
+
+      <div class="task-eq" id="task-eq"></div>
+
+      <form id="answer-form" autocomplete="off">
+        <div class="expr-input">
+          <label for="answer" id="answer-label" style="font-weight:600">Ответ:</label>
+          <input id="answer" spellcheck="false" autocapitalize="off" aria-label="Ваш ответ">
+        </div>
+        <div class="preview" id="answer-preview" aria-live="polite"></div>
+        <div class="row" style="margin-top:8px">
+          <button class="primary" type="submit">Проверить</button>
+          <button type="button" id="hint-btn">Подсказка</button>
+          <button type="button" id="solution-btn">Показать решение</button>
+          <button type="button" id="numeric-btn">Проверить численно</button>
+          <button type="button" id="new-task-btn">Новая задача</button>
+        </div>
+      </form>
+      <p class="small-note" id="answer-help"></p>
+
+      <div class="feedback" id="feedback" aria-live="polite"></div>
+      <div class="solution" id="solution"></div>
+    </div>
+  </main>
+
+  <footer class="site">
+    <div class="wrap">Прогресс в тренажёре хранится только в вашем браузере.</div>
+  </footer>
+
+  <script src="../vendor/katex/katex.min.js"></script>
+  <script src="../vendor/katex/contrib/auto-render.min.js"></script>
+  <script src="../assets/js/math-render.js"></script>
+  <script src="../assets/js/steps.js"></script>
+  <script src="../assets/js/plot.js"></script>
+  <script src="../assets/js/expr.js"></script>
+  <script src="../assets/js/limits-core.js"></script>
+  <script src="../assets/js/reals-core.js"></script>
+  <script src="../assets/js/pair-trainer.js"></script>
+  <script src="../assets/js/limits.js"></script>
+  <script src="../assets/js/tutor-config.js"></script>
+  <script src="../assets/js/tutor.js"></script>
+</body>
+</html>

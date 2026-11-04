@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Формула Тейлора</title>
+  <meta name="description" content="Формула Тейлора: вывод коэффициентов, интерактивное приближение функций многочленами, остаточный член Пеано и Лагранжа, стандартные разложения, пределы через разложения и тренажёр.">
+  <link rel="stylesheet" href="../vendor/katex/katex.min.css">
+  <link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+  <header class="site">
+    <div class="wrap">
+      <a class="logo" href="../index.html">Математика по шагам</a>
+      <nav><a href="../index.html">Все темы</a></nav>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <h1>Формула Тейлора</h1>
+    <p class="lead">Математический анализ, 1 семестр. Как заменить сложную функцию многочленом, насколько точна такая замена и почему это самый мощный инструмент для пределов и приближённых вычислений.</p>
+    <p class="tracks">
+      <span class="track math">Математика — всё, включая доказательства</span>
+      <span class="track tech">Техника — §1, 2, 4–7</span>
+      <span class="track econ">Экономика — §1, 2, 6</span>
+    </p>
+
+    <ul class="toc">
+      <li><a href="#idea">Идея</a></li>
+      <li><a href="#lab">Лаборатория</a></li>
+      <li><a href="#remainder">Остаточный член</a></li>
+      <li><a href="#table">Стандартные разложения</a></li>
+      <li><a href="#limits">Пределы</a></li>
+      <li><a href="#applications">Приложения</a></li>
+      <li><a href="#practice">Тренажёр</a></li>
+    </ul>
+
+    <!-- 1. Идея -->
+    <h2 id="idea">1. Идея: многочлен, который «копирует» функцию</h2>
+    <p>Касательная \(f(a) + f'(a)(x - a)\) — лучшая <b>линейная</b> замена функции около точки \(a\): у неё то же значение и тот же наклон. Чтобы приблизить точнее, потребуем, чтобы у многочлена совпадали ещё и вторая, третья, …, \(n\)-я производные.</p>
+    <ol class="steps" data-reveal>
+      <li>
+        <div class="formula">\[ P(x) = c_0 + c_1 (x - a) + c_2 (x - a)^2 + \ldots + c_n (x - a)^n \]</div>
+        <div class="why-line">Ищем многочлен по степеням \((x - a)\): так удобнее считать производные в точке \(a\).</div>
+      </li>
+      <li>
+        <div class="formula">\[ P(a) = c_0, \qquad P'(a) = c_1, \qquad P''(a) = 2 c_2 \]</div>
+        <div class="why-line">При подстановке \(x = a\) все слагаемые с \((x - a)\) обнуляются. После \(k\) дифференцирований от \(c_k (x - a)^k\) остаётся \(k! \, c_k\), а младшие степени уже исчезли.</div>
+      </li>
+      <li>
+        <div class="formula">\[ P^{(k)}(a) = k! \, c_k \;\Rightarrow\; c_k = \frac{f^{(k)}(a)}{k!} \]</div>
+        <div class="why-line">Требуем \(P^{(k)}(a) = f^{(k)}(a)\) — коэффициенты определяются однозначно.</div>
+      </li>
+      <li>
+        <div class="formula">\[ f(x) = \sum_{k=0}^{n} \frac{f^{(k)}(a)}{k!} (x - a)^k + R_n(x) \]</div>
+        <div class="why-line">Это и есть <b>формула Тейлора</b>; \(R_n(x)\) — остаточный член (ошибка). При \(a = 0\) её называют формулой Маклорена.</div>
+      </li>
+    </ol>
+
+    <!-- 2. Лаборатория -->
+    <h2 id="lab">2. Лаборатория: как многочлены прилипают к графику</h2>
+    <p>Введите функцию, выберите точку \(a\) и степень \(n\). Коэффициенты считаются для любой функции, которую понимает сайт.</p>
+    <div class="card">
+      <div class="expr-input">
+        <label for="lab-f" style="font-weight:600">\(f(x) =\)</label>
+        <input id="lab-f" value="sin x" spellcheck="false" autocomplete="off" autocapitalize="off" aria-label="Функция">
+        <label for="lab-a" style="font-weight:600">\(a =\)</label>
+        <input id="lab-a" value="0" style="flex:0 1 80px" spellcheck="false" aria-label="Точка разложения">
+      </div>
+      <div class="chips" id="lab-chips">
+        <button type="button" data-a="0">sin x</button>
+        <button type="button" data-a="0">e^x</button>
+        <button type="button" data-a="0">ln(1 + x)</button>
+        <button type="button" data-a="0">1/(1 + x^2)</button>
+        <button type="button" data-a="0">sqrt(1 + x)</button>
+        <button type="button" data-a="1">ln x</button>
+        <button type="button" data-a="0">tg x</button>
+        <button type="button" data-a="0">e^(-x^2)</button>
+      </div>
+      <div class="preview" id="lab-preview" aria-live="polite"></div>
+      <canvas class="plot" id="lab-plot" style="margin-top:12px" aria-label="Функция и её многочлен Тейлора"></canvas>
+      <div class="legend">
+        <span><i style="background:var(--curve)"></i>\(f(x)\)</span>
+        <span><i style="background:var(--curve-2)"></i>\(P_n(x)\)</span>
+      </div>
+      <div class="sliders">
+        <div class="slider"><label for="lab-n">\(n\)</label><input type="range" id="lab-n" min="0" max="12" step="1" value="3"><output id="lab-n-out">3</output></div>
+      </div>
+      <div class="readout" id="lab-out" aria-live="polite"></div>
+    </div>
+    <details class="why">
+      <summary>Почему для \(\ln(1 + x)\) и \(\frac{1}{1 + x^2}\) многочлены «не дотягиваются» дальше \(|x| = 1\)?</summary>
+      <p>При росте \(n\) многочлены Тейлора сходятся к функции только внутри <b>интервала сходимости</b>. Для \(\ln(1 + x)\) это \((-1;\ 1]\): при \(x = -1\) функция уходит в \(-\infty\), и «дальше» многочлены видеть не могут. Удивительнее \(\frac{1}{1 + x^2}\): она гладкая на всей прямой, а ряд сходится лишь при \(|x| &lt; 1\). Причина в комплексных числах: в точках \(x = \pm i\) знаменатель обращается в ноль. Подробно это будет в теме «Ряды».</p>
+    </details>
+
+    <!-- 3. Остаточный член -->
+    <h2 id="remainder">3. Остаточный член: насколько точно приближение <span class="track math">Математика</span></h2>
+    <div class="card">
+      <p style="margin-top:0"><b>Форма Пеано.</b> Если \(f\) имеет \(n\) производных в точке \(a\), то \(R_n(x) = o\big((x - a)^n\big)\) при \(x \to a\): ошибка мала <b>по сравнению</b> с \((x - a)^n\).</p>
+      <p style="margin-bottom:0"><b>Форма Лагранжа.</b> Если \(f\) имеет \(n + 1\) производную на отрезке между \(a\) и \(x\), то найдётся \(\xi\) между ними, для которой</p>
+      <p>\[ R_n(x) = \frac{f^{(n+1)}(\xi)}{(n + 1)!} (x - a)^{n+1}. \]</p>
+    </div>
+    <p>Пеано отвечает на вопрос «как быстро ошибка стремится к нулю» — это нужно для <b>пределов</b>. Лагранж даёт <b>численную оценку</b> ошибки — это нужно для <b>вычислений</b>.</p>
+    <details class="why">
+      <summary>Доказательство формы Пеано</summary>
+      <p>Функция \(R_n = f - P_n\) и её производные до \(n\)-й включительно равны нулю в точке \(a\) (так подобраны коэффициенты). Применим правило Лопиталя \(n - 1\) раз:</p>
+      <p>\[ \begin{aligned} \lim_{x \to a} \frac{R_n(x)}{(x - a)^n} &amp;= \lim_{x \to a} \frac{R_n'(x)}{n (x - a)^{n-1}} = \ldots \\ &amp;= \lim_{x \to a} \frac{R_n^{(n-1)}(x)}{n! \,(x - a)} = \frac{R_n^{(n)}(a)}{n!} = 0. \end{aligned} \]</p>
+      <p>Последний переход — определение производной: \(\frac{R_n^{(n-1)}(x) - R_n^{(n-1)}(a)}{x - a} \to R_n^{(n)}(a) = 0\). \(\blacksquare\)</p>
+    </details>
+    <details class="why">
+      <summary>Доказательство формы Лагранжа</summary>
+      <p>Зафиксируем \(x\) и рассмотрим как функции от \(t\) между \(a\) и \(x\):</p>
+      <p>\[ \varphi(t) = f(x) - \sum_{k=0}^{n} \frac{f^{(k)}(t)}{k!} (x - t)^k, \qquad \psi(t) = (x - t)^{n+1}. \]</p>
+      <p>Тогда \(\varphi(a) = R_n(x)\), \(\varphi(x) = 0\), \(\psi(a) = (x - a)^{n+1}\), \(\psi(x) = 0\). При дифференцировании \(\varphi\) почти всё сокращается (сумма «телескопическая»): \(\varphi'(t) = -\frac{f^{(n+1)}(t)}{n!} (x - t)^n\). По теореме Коши о среднем</p>
+      <p>\[ \frac{R_n(x)}{(x - a)^{n+1}} = \frac{\varphi(a) - \varphi(x)}{\psi(a) - \psi(x)} = \frac{\varphi'(\xi)}{\psi'(\xi)} = \frac{f^{(n+1)}(\xi)}{(n+1)!}. \;\blacksquare \]</p>
+    </details>
+    <details class="why">
+      <summary>Бонус: число \(e\) иррационально</summary>
+      <p>По формуле Тейлора для \(e^x\) при \(x = 1\): \(e = \sum_{k=0}^{q} \frac{1}{k!} + \frac{e^\xi}{(q+1)!}\), \(0 &lt; \xi &lt; 1\). Пусть \(e = \frac{p}{q}\). Умножим на \(q!\): число \(q!\,e - \sum_{k=0}^{q} \frac{q!}{k!}\) целое, но оно равно \(\frac{e^\xi}{q + 1} \in \left(0;\ \frac{3}{q + 1}\right)\). При \(q \ge 2\) это меньше 1 — целое число строго между 0 и 1. Противоречие. (\(q = 1\) невозможно, так как \(2 &lt; e &lt; 3\).) \(\blacksquare\)</p>
+    </details>
+
+    <!-- 4. Таблица -->
+    <h2 id="table">4. Стандартные разложения (Маклорен)</h2>
+    <p>Их стоит знать наизусть — из них собираются все остальные. Везде остаток \(o(x^n)\).</p>
+    <ul class="table-list">
+      <li>\[ e^x = 1 + x + \frac{x^2}{2!} + \ldots + \frac{x^n}{n!} \]
+        <details><summary>Откуда?</summary><p>Все производные \(e^x\) равны \(e^x\), в нуле — 1. Значит, \(c_k = \frac{1}{k!}\).</p></details></li>
+      <li>\[ \sin x = x - \frac{x^3}{3!} + \frac{x^5}{5!} - \ldots, \qquad \cos x = 1 - \frac{x^2}{2!} + \frac{x^4}{4!} - \ldots \]
+        <details><summary>Откуда?</summary><p>Производные синуса циклически повторяются: \(\sin, \cos, -\sin, -\cos\). В нуле это \(0, 1, 0, -1\): остаются только нечётные степени с чередующимися знаками. У косинуса — чётные.</p></details></li>
+      <li>\[ \ln(1 + x) = x - \frac{x^2}{2} + \frac{x^3}{3} - \ldots + (-1)^{n+1}\frac{x^n}{n} \]
+        <details><summary>Откуда?</summary><p>\((\ln(1 + x))' = \frac{1}{1 + x} = 1 - x + x^2 - \ldots\) (геометрическая прогрессия). Коэффициенты производной — это \(k c_k\), отсюда \(c_k = \frac{(-1)^{k+1}}{k}\).</p></details></li>
+      <li>\[ (1 + x)^\alpha = 1 + \alpha x + \frac{\alpha(\alpha - 1)}{2!} x^2 + \ldots + \binom{\alpha}{n} x^n \]
+        <details><summary>Откуда?</summary><p>\(k\)-я производная \((1 + x)^\alpha\) в нуле равна \(\alpha(\alpha - 1)\cdots(\alpha - k + 1)\). Для натурального \(\alpha\) это бином Ньютона, для остальных — его обобщение. Частные случаи: \(\sqrt{1 + x} = 1 + \frac{x}{2} - \frac{x^2}{8} + \ldots\), \(\frac{1}{1 + x} = 1 - x + x^2 - \ldots\)</p></details></li>
+      <li>\[ \frac{1}{1 - x} = 1 + x + x^2 + \ldots + x^n \]
+        <details><summary>Откуда?</summary><p>Сумма геометрической прогрессии: \(1 + x + \ldots + x^n = \frac{1 - x^{n+1}}{1 - x}\), то есть остаток равен \(\frac{x^{n+1}}{1 - x}\).</p></details></li>
+      <li>\[ \operatorname{arctg} x = x - \frac{x^3}{3} + \frac{x^5}{5} - \ldots \]
+        <details><summary>Откуда?</summary><p>\((\operatorname{arctg} x)' = \frac{1}{1 + x^2} = 1 - x^2 + x^4 - \ldots\); «интегрируем» почленно. При \(x = 1\) получается знаменитый ряд Лейбница \(\frac{\pi}{4} = 1 - \frac{1}{3} + \frac{1}{5} - \ldots\)</p></details></li>
+      <li>\[ \operatorname{tg} x = x + \frac{x^3}{3} + \frac{2x^5}{15} + \ldots \]
+        <details><summary>Откуда?</summary><p>Делим ряд синуса на ряд косинуса «уголком» или ищем коэффициенты из \(\operatorname{tg} x \cdot \cos x = \sin x\). Общей простой формулы для коэффициентов нет — проверьте в лаборатории, какие там дроби.</p></details></li>
+    </ul>
+
+    <!-- 5. Пределы -->
+    <h2 id="limits">5. Пределы через разложения</h2>
+    <p>Главное правило: раскладываем числитель и знаменатель <b>до одного порядка</b> — до первого члена, который не сокращается. Например:</p>
+    <ol class="steps" data-reveal>
+      <li>
+        <div class="formula">\[ \lim_{x \to 0} \frac{x - \sin x}{x^3} \]</div>
+        <div class="why-line">Неопределённость \(\frac{0}{0}\); эквивалентность \(\sin x \sim x\) не помогает — после замены получится \(\frac{0}{x^3}\), а это ошибка: заменять слагаемые в разности нельзя.</div>
+      </li>
+      <li>
+        <div class="formula">\[ \sin x = x - \frac{x^3}{6} + o(x^3) \]</div>
+        <div class="why-line">Знаменатель имеет порядок \(x^3\), значит, синус раскладываем до \(x^3\).</div>
+      </li>
+      <li>
+        <div class="formula">\[ \frac{x - \sin x}{x^3} = \frac{\frac{x^3}{6} + o(x^3)}{x^3} = \frac{1}{6} + o(1) \to \frac{1}{6} \]</div>
+        <div class="why-line">Члены \(x\) сократились, остался главный член \(\frac{x^3}{6}\). Деление \(o(x^3)\) на \(x^3\) даёт бесконечно малую.</div>
+      </li>
+    </ol>
+    <details class="why">
+      <summary>Как обращаться с \(o\)-маленьким</summary>
+      <p>\(o(x^n) \pm o(x^n) = o(x^n)\) (а не 0!), \(x^m \cdot o(x^n) = o(x^{m+n})\), \(o(x^n) \cdot o(x^m) = o(x^{m+n})\), \(o(x^m) = o(x^n)\) при \(m \ge n\) (более высокий порядок «поглощается»). Поэтому при перемножении разложений достаточно следить только за степенями до нужного порядка.</p>
+    </details>
+
+    <div class="card">
+      <h3 style="margin-top:0">Лаборатория пределов при \(x \to 0\)</h3>
+      <div class="expr-input">
+        <label for="lim-n" style="font-weight:600">числитель</label>
+        <input id="lim-n" value="tg x - sin x" spellcheck="false" autocomplete="off" autocapitalize="off" aria-label="Числитель">
+      </div>
+      <div class="expr-input" style="margin-top:8px">
+        <label for="lim-d" style="font-weight:600">знаменатель</label>
+        <input id="lim-d" value="x^3" spellcheck="false" autocomplete="off" autocapitalize="off" aria-label="Знаменатель">
+      </div>
+      <div class="readout" id="lim-out" aria-live="polite"></div>
+    </div>
+
+    <!-- 6. Приложения -->
+    <h2 id="applications">6. Приложения</h2>
+    <div class="card">
+      <p style="margin-top:0"><span class="track tech">Техника</span> <b>Насколько точно \(\sin x \approx x\)?</b> По Лагранжу ошибка не больше \(\frac{|x|^3}{6}\). Для угла \(10^\circ \approx 0{,}1745\) рад это \(\approx 0{,}0009\), а приближение \(x - \frac{x^3}{6}\) ошибается уже лишь на \(\frac{|x|^5}{120} \approx 1{,}3 \cdot 10^{-6}\).</p>
+      <p><span class="track tech">Техника</span> <b>Кинетическая энергия.</b> В теории относительности \(E_k = mc^2\left(\frac{1}{\sqrt{1 - v^2/c^2}} - 1\right)\). Разложим \((1 - t)^{-1/2} = 1 + \frac{t}{2} + \frac{3t^2}{8} + \ldots\) при \(t = \frac{v^2}{c^2}\):</p>
+      <p>\[ E_k = \frac{mv^2}{2} + \frac{3}{8}\frac{mv^4}{c^2} + \ldots \]</p>
+      <p>Первый член — школьная формула, второй — релятивистская поправка. При \(v = 0{,}1c\) она составляет всего \(0{,}75\%\).</p>
+      <p style="margin-bottom:0"><span class="track econ">Экономика</span> <b>Правило 70.</b> За сколько лет вклад под \(r\) годовых удвоится? Из \((1 + r)^T = 2\) получаем \(T = \frac{\ln 2}{\ln(1 + r)} \approx \frac{0{,}693}{r}\), так как \(\ln(1 + r) \approx r\) при малых \(r\). Отсюда «правило 70»: \(T \approx \frac{70}{r\,\%}\). При 7% годовых — около 10 лет (точно: 10,24).</p>
+    </div>
+
+    <!-- 7. Тренажёр -->
+    <h2 id="practice">7. Тренажёр</h2>
+    <div class="card">
+      <div class="row" style="justify-content:space-between">
+        <label>Режим:
+          <select id="mode">
+            <option value="limit">Предел через разложения</option>
+            <option value="coef">Коэффициент разложения</option>
+            <option value="terms">Сколько членов нужно (оценка Лагранжа)</option>
+          </select>
+        </label>
+        <div class="stats" id="stats"></div>
+      </div>
+      <div class="task-eq" id="task"></div>
+      <form id="answer-form" autocomplete="off">
+        <div class="expr-input">
+          <label for="answer" id="answer-label" style="font-weight:600">Ответ:</label>
+          <input id="answer" spellcheck="false" autocapitalize="off" placeholder="например: -1/6" aria-label="Ваш ответ">
+        </div>
+        <div class="preview" id="answer-preview" aria-live="polite"></div>
+        <div class="row" style="margin-top:8px">
+          <button class="primary" type="submit">Проверить</button>
+          <button type="button" id="hint-btn">Подсказка</button>
+          <button type="button" id="solution-btn">Показать решение</button>
+          <button type="button" id="new-task-btn">Новая задача</button>
+        </div>
+      </form>
+      <div class="feedback" id="feedback" aria-live="polite"></div>
+      <div class="solution" id="solution"></div>
+    </div>
+  </main>
+
+  <footer class="site">
+    <div class="wrap">Прогресс в тренажёре хранится только в вашем браузере.</div>
+  </footer>
+
+  <script src="../vendor/katex/katex.min.js"></script>
+  <script src="../vendor/katex/contrib/auto-render.min.js"></script>
+  <script src="../assets/js/math-render.js"></script>
+  <script src="../assets/js/steps.js"></script>
+  <script src="../assets/js/plot.js"></script>
+  <script src="../assets/js/expr.js"></script>
+  <script src="../assets/js/limits-core.js"></script>
+  <script src="../assets/js/series.js"></script>
+  <script src="../assets/js/taylor-core.js"></script>
+  <script src="../assets/js/taylor.js"></script>
+  <script src="../assets/js/tutor-config.js"></script>
+  <script src="../assets/js/tutor.js"></script>
+</body>
+</html>

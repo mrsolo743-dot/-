@@ -1,0 +1,9 @@
+{
+  "name": "math-step-by-step",
+  "private": true,
+  "description": "Сайт для изучения тем по математике: теория с выводом формул, интерактивные графики, тренажёр",
+  "scripts": {
+    "start": "python3 -m http.server 8000",
+    "test": "node --test tests/*.test.js"
+  }
+}

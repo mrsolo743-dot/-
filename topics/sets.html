@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Множества и отображения</title>
+  <meta name="description" content="Множества и отображения: операции и диаграммы Венна, инъекции, сюръекции, биекции, мощность, счётность ℚ и несчётность ℝ (диагональ Кантора). Лаборатория и тренажёр.">
+  <link rel="stylesheet" href="../vendor/katex/katex.min.css">
+  <link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+  <header class="site">
+    <div class="wrap">
+      <a class="logo" href="../index.html">Математика по шагам</a>
+      <nav><a href="../index.html">Все темы</a></nav>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <h1>Множества и отображения</h1>
+    <p class="lead">Фундамент. Операции над множествами и их связь с логикой, отображения и их виды, и главный сюрприз: бесконечности бывают разного размера.</p>
+    <p class="tracks">
+      <span class="track math">Математика — обязательно целиком</span>
+      <span class="track tech">Техника — §1, 3</span>
+    </p>
+
+    <ul class="toc">
+      <li><a href="#ops">Операции</a></li>
+      <li><a href="#lab">Лаборатория Венна</a></li>
+      <li><a href="#maps">Отображения</a></li>
+      <li><a href="#kinds">Инъекция, сюръекция, биекция</a></li>
+      <li><a href="#cardinality">Мощность</a></li>
+      <li><a href="#cantor">Диагональ Кантора</a></li>
+      <li><a href="#practice">Тренажёр</a></li>
+    </ul>
+
+    <!-- 1. Операции -->
+    <h2 id="ops">1. Операции над множествами</h2>
+    <p>Множество задаётся своими элементами: \(x \in A\) — «\(x\) принадлежит \(A\)». \(A \subset B\) (подмножество), если каждый элемент \(A\) лежит в \(B\). Множества равны, если состоят из одних и тех же элементов: \(A = B \iff A \subset B \land B \subset A\).</p>
+    <div class="card">
+      <p style="margin-top:0">\[ A \cup B = \{x : x \in A \lor x \in B\} \quad \text{— объединение,} \]</p>
+      <p>\[ A \cap B = \{x : x \in A \land x \in B\} \quad \text{— пересечение,} \]</p>
+      <p>\[ A \setminus B = \{x : x \in A \land x \notin B\} \quad \text{— разность,} \]</p>
+      <p>\[ \overline{A} = \{x \in U : x \notin A\} \quad \text{— дополнение,} \]</p>
+      <p style="margin-bottom:0">\[ A \triangle B = (A \setminus B) \cup (B \setminus A) \]</p>
+      <p class="small-note" style="text-align:center;margin-top:0">— симметрическая разность: элементы ровно одного из множеств.</p>
+    </div>
+    <p>Здесь \(U\) — универсальное множество, внутри которого всё происходит (на диаграмме — прямоугольник). Обратите внимание: определения операций — это логические связки. Поэтому каждое тождество для множеств — это закон логики.</p>
+    <details class="why">
+      <summary>Как доказывать равенство множеств: метод «возьмём элемент»</summary>
+      <p>Докажем \(\overline{A \cup B} = \overline{A} \cap \overline{B}\). Для любого \(x\):</p>
+      <p>\[ \begin{aligned} x \in \overline{A \cup B} &amp;\iff \neg(x \in A \lor x \in B) \\ &amp;\iff x \notin A \land x \notin B \\ &amp;\iff x \in \overline{A} \cap \overline{B}. \end{aligned} \]</p>
+      <p>Средний переход — закон де Моргана из <a href="logic.html#laws">логики</a>. Цепочка равносильностей доказывает оба включения сразу. \(\blacksquare\)</p>
+      <p>Диаграмма Венна помогает <b>угадать</b> ответ и найти контрпример, но доказательством служит именно такая цепочка (или проверка всех областей, что то же самое, что таблица истинности).</p>
+    </details>
+
+    <!-- 2. Лаборатория -->
+    <h2 id="lab">2. Лаборатория: диаграмма Венна</h2>
+    <p>Введите выражение — область закрасится. Введите второе — проверим, равны ли множества.</p>
+    <div class="card">
+      <div class="expr-input">
+        <label for="lab-e1" style="font-weight:600">\(E_1 =\)</label>
+        <input id="lab-e1" value="(A ∪ B) \ C" spellcheck="false" autocomplete="off" autocapitalize="off" aria-label="Выражение E1">
+      </div>
+      <div class="expr-input" style="margin-top:8px">
+        <label for="lab-e2" style="font-weight:600">\(E_2 =\)</label>
+        <input id="lab-e2" value="(A \ C) ∪ (B \ C)" spellcheck="false" autocomplete="off" autocapitalize="off" aria-label="Выражение E2 (необязательно)" placeholder="необязательно">
+      </div>
+      <p class="small-note">Множества A, B, C. Операции: <code>∪</code> или <code>+</code>, <code>∩</code> или <code>&amp;</code>, <code>\</code> или <code>-</code>, <code>Δ</code> или <code>^</code>; дополнение — <code>A'</code> или <code>~A</code>.</p>
+      <div class="chips" id="lab-chips">
+        <button type="button" data-e1="(A ∪ B)'" data-e2="A' ∩ B'">де Морган</button>
+        <button type="button" data-e1="A \ (B ∩ C)" data-e2="(A \ B) ∪ (A \ C)">разность и пересечение</button>
+        <button type="button" data-e1="(A \ B) ∪ B" data-e2="A">ловушка</button>
+        <button type="button" data-e1="(A Δ B) Δ C" data-e2="A Δ (B Δ C)">Δ ассоциативна</button>
+      </div>
+      <div class="venn-row">
+        <figure><canvas class="venn" id="lab-v1" aria-label="Диаграмма Венна для E1"></canvas><figcaption id="lab-c1"></figcaption></figure>
+        <figure id="lab-f2"><canvas class="venn" id="lab-v2" aria-label="Диаграмма Венна для E2"></canvas><figcaption id="lab-c2"></figcaption></figure>
+      </div>
+      <div id="lab-out" aria-live="polite"></div>
+    </div>
+
+    <!-- 3. Отображения -->
+    <h2 id="maps">3. Отображения</h2>
+    <div class="card">
+      <p style="margin-top:0"><b>Отображение</b> \(f\colon X \to Y\) — правило, которое <b>каждому</b> \(x \in X\) ставит в соответствие <b>ровно один</b> элемент \(f(x) \in Y\). \(X\) — область определения, \(Y\) — область значений (кодомен).</p>
+      <p><b>Образ</b> множества \(A \subset X\): \(f(A) = \{f(x) : x \in A\}\). <b>Прообраз</b> множества \(B \subset Y\): \(f^{-1}(B) = \{x \in X : f(x) \in B\}\).</p>
+      <p style="margin-bottom:0"><b>Композиция</b>: \((g \circ f)(x) = g(f(x))\) — сначала \(f\), потом \(g\).</p>
+    </div>
+    <details class="why">
+      <summary>Прообраз определён всегда, даже если обратной функции нет</summary>
+      <p>Для \(f(x) = x^2\) обратной функции на \(\mathbb{R}\) нет, но прообраз есть у любого множества: \(f^{-1}([1;\ 4]) = [-2;\ -1] \cup [1;\ 2]\), \(f^{-1}(\{-1\}) = \varnothing\).</p>
+      <p>Прообраз «уважает» все операции: \(f^{-1}(A \cup B) = f^{-1}(A) \cup f^{-1}(B)\), \(f^{-1}(A \cap B) = f^{-1}(A) \cap f^{-1}(B)\). А образ — только объединение: \(f(A \cap B) \subset f(A) \cap f(B)\), и включение бывает строгим. Для \(x^2\), \(A = \{-1\}\), \(B = \{1\}\): \(f(A \cap B) = \varnothing\), а \(f(A) \cap f(B) = \{1\}\).</p>
+    </details>
+
+    <h2 id="kinds">4. Инъекция, сюръекция, биекция</h2>
+    <div class="card">
+      <p style="margin-top:0"><b>Инъекция</b> — разные точки переходят в разные: \(x_1 \ne x_2 \Rightarrow f(x_1) \ne f(x_2)\). На стрелочной диаграмме: в каждый элемент \(Y\) входит <b>не больше одной</b> стрелки.</p>
+      <p><b>Сюръекция</b> — принимается каждое значение: \(\forall y \in Y\; \exists x\colon f(x) = y\). В каждый элемент \(Y\) входит <b>хотя бы одна</b> стрелка.</p>
+      <p style="margin-bottom:0"><b>Биекция</b> — и то, и другое: ровно одна стрелка в каждый элемент \(Y\). Только у биекции есть <b>обратное отображение</b> \(f^{-1}\colon Y \to X\) (развернуть все стрелки).</p>
+    </div>
+    <details class="why">
+      <summary>Почему ответ зависит от того, «откуда и куда»</summary>
+      <p>Отображение — это не только формула, но и пара множеств \(X\), \(Y\). \(x^2\colon \mathbb{R} \to \mathbb{R}\) не инъекция и не сюръекция; \(x^2\colon \mathbb{R} \to [0; +\infty)\) уже сюръекция; \(x^2\colon [0; +\infty) \to [0; +\infty)\) — биекция с обратной \(\sqrt{y}\). Именно так определяют обратные функции \(\arcsin\), \(\ln\), \(\sqrt{\ }\): сужают область, пока функция не станет биекцией.</p>
+    </details>
+    <details class="why">
+      <summary>Почему для конечных множеств инъекция «в себя» — это биекция, а для бесконечных нет</summary>
+      <p>Если \(X\) конечно и \(f\colon X \to X\) инъективно, то \(|f(X)| = |X|\), значит, \(f(X) = X\) — сюръекция. Для \(\mathbb{N}\) это неверно: \(n \mapsto 2n\) — инъекция, но нечётные числа не принимаются. Множество, которое можно инъективно отобразить в свою собственную часть, — один из способов определить бесконечность (по Дедекинду).</p>
+    </details>
+
+    <!-- 5. Мощность -->
+    <h2 id="cardinality">5. Мощность: сколько элементов в бесконечном множестве</h2>
+    <p>Множества <b>равномощны</b> (\(|A| = |B|\)), если между ними есть биекция. Так сравнивают даже бесконечные множества: не считаем элементы, а ставим их в пары. Множество, равномощное \(\mathbb{N}\), называют <b>счётным</b>: его элементы можно занумеровать \(a_1, a_2, a_3, \ldots\)</p>
+    <ul>
+      <li>\(\mathbb{Z}\) счётно: \(0,\ 1,\ -1,\ 2,\ -2,\ 3,\ \ldots\)</li>
+      <li>Интервал \((-\frac{\pi}{2};\ \frac{\pi}{2})\) равномощен \(\mathbb{R}\): биекция \(\operatorname{tg} x\). Часть может быть «так же велика», как целое.</li>
+    </ul>
+    <p><b>\(\mathbb{Q}\) счётно.</b> Выпишем положительные дроби \(\frac{p}{q}\) в таблицу и пойдём по диагоналям, пропуская сократимые дроби — они повторяют уже встреченные (серые):</p>
+    <div class="card"><div class="tt-wrap" id="q-table"></div></div>
+    <p class="small-note">Так же доказывается, что \(\mathbb{N} \times \mathbb{N}\) счётно, и вообще счётное объединение счётных множеств счётно.</p>
+
+    <h2 id="cantor">6. Диагональ Кантора: \(\mathbb{R}\) несчётно</h2>
+    <p>Допустим, кто-то утверждает, что занумеровал все числа из \((0;\ 1)\). Покажем, что в его списке кого-то нет. Строим число \(x\): его \(n\)-я цифра после запятой — <b>не такая</b>, как \(n\)-я цифра \(n\)-го числа (берём 5, а если там 5 — берём 4). Тогда \(x\) отличается от каждого числа списка хотя бы в одной цифре.</p>
+    <div class="card">
+      <div class="tt-wrap" id="cantor-table"></div>
+      <div class="readout" id="cantor-out"></div>
+      <div class="row" style="margin-top:8px"><button type="button" class="primary" id="cantor-new">Другой «полный» список</button></div>
+    </div>
+    <details class="why">
+      <summary>Тонкость: а как же \(0{,}4999\ldots = 0{,}5000\ldots\)?</summary>
+      <p>У некоторых чисел две десятичные записи. Если бы построенное \(x\) оказалось записью вида \(\ldots 999\ldots\) или \(\ldots 000\ldots\), оно могло бы совпасть с числом из списка, записанным «по-другому». Поэтому мы используем только цифры 4 и 5: у числа из таких цифр запись единственна, и аргумент безупречен.</p>
+    </details>
+    <details class="why">
+      <summary>Теорема Кантора: \(|\mathcal{P}(X)| &gt; |X|\) для любого множества</summary>
+      <p>\(\mathcal{P}(X)\) — множество всех подмножеств \(X\). Инъекция \(X \to \mathcal{P}(X)\) есть: \(x \mapsto \{x\}\). Покажем, что сюръекции нет. Пусть \(f\colon X \to \mathcal{P}(X)\) — любое отображение. Рассмотрим</p>
+      <p>\[ D = \{x \in X : x \notin f(x)\}. \]</p>
+      <p>Если бы \(D = f(d)\) для некоторого \(d\), то \(d \in D \iff d \notin f(d) = D\) — противоречие. Значит, \(D\) не принимается. \(\blacksquare\) Это та же диагональ: «\(x\)-й элемент отличается от \(x\)-го множества в точке \(x\)». Отсюда: бесконечностей бесконечно много, \(|\mathbb{N}| &lt; |\mathcal{P}(\mathbb{N})| &lt; |\mathcal{P}(\mathcal{P}(\mathbb{N}))| &lt; \ldots\)</p>
+    </details>
+    <details class="why">
+      <summary>Теорема Кантора — Бернштейна</summary>
+      <p>Если есть инъекции \(A \to B\) и \(B \to A\), то \(A\) и \(B\) равномощны. Это удобно: строить биекцию явно трудно, а две инъекции — легко. Пример: \([0;\ 1]\) и \((0;\ 1)\). Инъекция \((0; 1) \to [0; 1]\) — вложение, а \([0; 1] \to (0; 1)\) — \(x \mapsto \frac{1}{4} + \frac{x}{2}\). Значит, \(|[0;\ 1]| = |(0;\ 1)| = |\mathbb{R}|\).</p>
+    </details>
+
+    <!-- 7. Тренажёр -->
+    <h2 id="practice">7. Тренажёр</h2>
+    <div class="card">
+      <div class="row" style="justify-content:space-between">
+        <label>Режим:
+          <select id="mode">
+            <option value="region">Закрасьте область на диаграмме</option>
+            <option value="eq">Равны ли множества?</option>
+            <option value="map">Стрелочная диаграмма: какой тип?</option>
+            <option value="func">Функции: инъекция? сюръекция?</option>
+            <option value="count">Счётно или несчётно?</option>
+          </select>
+        </label>
+        <div class="stats" id="stats"></div>
+      </div>
+      <div class="task-eq" id="task"></div>
+      <div id="area"></div>
+      <div class="feedback" id="feedback" aria-live="polite"></div>
+      <div class="solution" id="solution"></div>
+      <div class="row" style="margin-top:12px">
+        <button type="button" class="primary" id="check-btn">Проверить</button>
+        <button type="button" id="solution-btn">Показать ответ</button>
+        <button type="button" id="new-task-btn">Новая задача</button>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site">
+    <div class="wrap">Прогресс в тренажёре хранится только в вашем браузере.</div>
+  </footer>
+
+  <script src="../vendor/katex/katex.min.js"></script>
+  <script src="../vendor/katex/contrib/auto-render.min.js"></script>
+  <script src="../assets/js/math-render.js"></script>
+  <script src="../assets/js/sets-core.js"></script>
+  <script src="../assets/js/sets.js"></script>
+  <script src="../assets/js/tutor-config.js"></script>
+  <script src="../assets/js/tutor.js"></script>
+</body>
+</html>

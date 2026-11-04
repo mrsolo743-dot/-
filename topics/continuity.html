@@ -1,0 +1,263 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Непрерывность</title>
+  <meta name="description" content="Непрерывность функций: определения, классификация точек разрыва, теоремы Больцано — Коши и Вейерштрасса с доказательствами, равномерная непрерывность и теорема Кантора. Интерактивные графики и тренажёр.">
+  <link rel="stylesheet" href="../vendor/katex/katex.min.css">
+  <link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+  <header class="site">
+    <div class="wrap">
+      <a class="logo" href="../index.html">Математика по шагам</a>
+      <nav><a href="../index.html">Все темы</a></nav>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <h1>Непрерывность</h1>
+    <p class="lead">Математический анализ, 1 семестр. Что значит «функция без скачков», какие бывают разрывы и три великие теоремы о непрерывных функциях на отрезке — все они держатся на полноте \(\mathbb{R}\).</p>
+    <p class="tracks">
+      <span class="track math">Математика — всё, включая доказательства</span>
+      <span class="track tech">Техника — §1–4, 6</span>
+      <span class="track econ">Экономика — §1, 2, 6</span>
+    </p>
+
+    <ul class="toc">
+      <li><a href="#def">Определение</a></li>
+      <li><a href="#breaks">Точки разрыва</a></li>
+      <li><a href="#bolzano">Больцано — Коши</a></li>
+      <li><a href="#weierstrass">Вейерштрасс</a></li>
+      <li><a href="#uniform">Равномерная непрерывность</a></li>
+      <li><a href="#applications">Приложения</a></li>
+      <li><a href="#practice">Тренажёр</a></li>
+    </ul>
+
+    <!-- 1. Определение -->
+    <h2 id="def">1. Определение непрерывности</h2>
+    <div class="card">
+      <p style="margin-top:0">Функция \(f\) <b>непрерывна в точке</b> \(x_0\), если</p>
+      <p>\[ \lim_{x \to x_0} f(x) = f(x_0). \]</p>
+      <p>В этом равенстве три условия: функция определена в \(x_0\), предел существует, и он равен значению. На языке \(\varepsilon\)–\(\delta\) (по Коши):</p>
+      <p>\[ \begin{aligned} \forall \varepsilon &gt; 0 \;\; \exists \delta &gt; 0 \;\; \forall x\colon\; &amp;|x - x_0| &lt; \delta \\ &amp;\Rightarrow |f(x) - f(x_0)| &lt; \varepsilon. \end{aligned} \]</p>
+      <p style="margin-bottom:0">По Гейне: для любой последовательности \(x_n \to x_0\) выполнено \(f(x_n) \to f(x_0)\). Функция непрерывна на множестве, если она непрерывна в каждой его точке.</p>
+    </div>
+    <details class="why">
+      <summary>Почему здесь \(|x - x_0| &lt; \delta\), а в определении предела \(0 &lt; |x - x_0| &lt; \delta\)?</summary>
+      <p>В пределе точку \(x_0\) выкалывают, потому что значение в ней не важно. В непрерывности оно важно: мы сравниваем \(f(x)\) именно с \(f(x_0)\). При \(x = x_0\) неравенство \(|f(x) - f(x_0)| &lt; \varepsilon\) выполнено автоматически, так что можно её не выкалывать.</p>
+    </details>
+    <details class="why">
+      <summary>«Можно нарисовать, не отрывая карандаша» — почему это не определение</summary>
+      <p>Это хорошая интуиция, но она подводит. Функция \(x \sin\frac{1}{x}\) (доопределённая нулём в нуле) непрерывна, но около нуля график бесконечно колеблется — нарисовать его «за один раз» невозможно, у этой кривой бесконечная длина. А функция Римана (\(\frac{1}{q}\) в точке \(\frac{p}{q}\) и 0 в иррациональных точках) непрерывна во всех иррациональных точках и разрывна во всех рациональных — никакой карандаш тут не поможет.</p>
+    </details>
+    <details class="why">
+      <summary>Какие функции непрерывны «автоматически»</summary>
+      <p>Сумма, разность, произведение и частное (при ненулевом знаменателе) непрерывных функций непрерывны — это следует из арифметики пределов. Композиция непрерывных непрерывна: если \(x_n \to x_0\), то \(g(x_n) \to g(x_0)\), а затем \(f(g(x_n)) \to f(g(x_0))\). Отсюда: все элементарные функции (многочлены, \(\sin\), \(e^x\), \(\ln\), их комбинации) непрерывны там, где определены.</p>
+    </details>
+
+    <!-- 2. Разрывы -->
+    <h2 id="breaks">2. Точки разрыва и их классификация</h2>
+    <p>Если функция не непрерывна в \(x_0\), смотрим на односторонние пределы \(f(x_0 - 0) = \lim_{x \to x_0^-} f(x)\) и \(f(x_0 + 0) = \lim_{x \to x_0^+} f(x)\):</p>
+    <div class="card">
+      <p style="margin-top:0"><b>Устранимый разрыв</b> — оба предела конечны и равны, но не равны \(f(x_0)\) (или \(f\) в \(x_0\) не определена). Достаточно переопределить одно значение.</p>
+      <p><b>Разрыв 1-го рода (скачок)</b> — оба предела конечны, но различны. Величина скачка: \(f(x_0 + 0) - f(x_0 - 0)\).</p>
+      <p style="margin-bottom:0"><b>Разрыв 2-го рода</b> — хотя бы один односторонний предел бесконечен или не существует.</p>
+    </div>
+
+    <div class="card">
+      <label>Пример:
+        <select id="gal-sel">
+          <option value="removableSin">sin(kx)/x в нуле</option>
+          <option value="removableWrongValue">«неправильное» значение в точке</option>
+          <option value="removableXsin">x·sin(1/x) в нуле</option>
+          <option value="jumpAbs">|x − r|/(x − r)</option>
+          <option value="jumpArctg">arctg(1/x) в нуле</option>
+          <option value="jumpFloor">целая часть [x]</option>
+          <option value="secondPole">1/(x − r)</option>
+          <option value="secondExp">e^(1/x) в нуле</option>
+          <option value="secondOsc">sin(1/x) в нуле</option>
+          <option value="contAbs">|x| в нуле</option>
+        </select>
+      </label>
+      <canvas class="plot" id="gal-plot" style="margin-top:12px" aria-label="График функции около точки разрыва"></canvas>
+      <div class="readout" id="gal-out" aria-live="polite"></div>
+    </div>
+
+    <!-- 3. Больцано — Коши -->
+    <h2 id="bolzano">3. Теорема Больцано — Коши о промежуточном значении</h2>
+    <p><b>Теорема.</b> Если \(f\) непрерывна на отрезке \([a;\ b]\) и \(f(a)\), \(f(b)\) разных знаков, то найдётся точка \(c \in (a;\ b)\), в которой \(f(c) = 0\).</p>
+    <ol class="steps" data-reveal>
+      <li>
+        <div class="formula">\[ m = \frac{a + b}{2} \]</div>
+        <div class="why-line">Делим отрезок пополам. Если \(f(m) = 0\) — корень найден. Иначе на одной из половин знаки на концах разные: выбираем её.</div>
+      </li>
+      <li>
+        <div class="formula">\[ \begin{gathered} [a;\ b] \supset [a_1;\ b_1] \supset [a_2;\ b_2] \supset \ldots, \\ b_n - a_n = \frac{b - a}{2^n} \to 0 \end{gathered} \]</div>
+        <div class="why-line">Повторяем бесконечно. Получаем вложенные отрезки, длины которых стремятся к нулю, и на концах каждого \(f(a_n) &lt; 0 &lt; f(b_n)\) (для определённости).</div>
+      </li>
+      <li>
+        <div class="formula">\[ \exists!\, c\colon\; a_n \to c, \quad b_n \to c \]</div>
+        <div class="why-line">По принципу вложенных отрезков (это полнота \(\mathbb{R}\)!) у них есть единственная общая точка \(c\).</div>
+      </li>
+      <li>
+        <div class="formula">\[ \begin{gathered} f(c) = \lim f(a_n) \le 0, \qquad f(c) = \lim f(b_n) \ge 0 \\ \Rightarrow\; f(c) = 0 \quad \blacksquare \end{gathered} \]</div>
+        <div class="why-line">По непрерывности (определение Гейне) переходим к пределу в неравенствах \(f(a_n) &lt; 0\) и \(f(b_n) &gt; 0\). Строгие неравенства в пределе становятся нестрогими.</div>
+      </li>
+    </ol>
+    <p>Это доказательство — готовый <b>алгоритм</b>: метод половинного деления (бисекции). Попробуйте:</p>
+    <div class="card">
+      <label>Уравнение:
+        <select id="bis-sel">
+          <option value="0">x² − 2 = 0 на [1; 2] (это √2)</option>
+          <option value="1">x³ − 2x − 5 = 0 на [2; 3]</option>
+          <option value="2">cos x − x = 0 на [0; 1]</option>
+          <option value="3">eˣ − 3 = 0 на [0; 2] (это ln 3)</option>
+        </select>
+      </label>
+      <canvas class="plot" id="bis-plot" style="margin-top:12px" aria-label="Метод половинного деления"></canvas>
+      <div class="row" style="margin-top:8px">
+        <button type="button" class="primary" id="bis-step">Шаг</button>
+        <button type="button" id="bis-ten">10 шагов</button>
+        <button type="button" id="bis-reset">Сначала</button>
+      </div>
+      <div class="readout" id="bis-out" aria-live="polite"></div>
+    </div>
+    <details class="why">
+      <summary>Почему без непрерывности или без полноты теорема неверна</summary>
+      <p>Без непрерывности: функция, равная \(-1\) при \(x &lt; 0\) и \(1\) при \(x \ge 0\), на \([-1;\ 1]\) меняет знак, но не обращается в ноль нигде — она «перепрыгивает» ноль.</p>
+      <p>Без полноты: на \(\mathbb{Q}\) функция \(x^2 - 2\) непрерывна, \(f(1) &lt; 0 &lt; f(2)\), но рационального корня нет. Доказательство ломается ровно на шаге 3.</p>
+    </details>
+    <details class="why">
+      <summary>Следствия: промежуточные значения и многочлены нечётной степени</summary>
+      <p>Применяя теорему к \(f(x) - C\), получаем: непрерывная на отрезке функция принимает <b>все</b> значения между \(f(a)\) и \(f(b)\).</p>
+      <p>Многочлен нечётной степени \(P(x) = x^{2k+1} + \ldots\) при больших \(|x|\) ведёт себя как старший член, то есть принимает значения разных знаков при \(x = \pm R\). Значит, у него есть вещественный корень. Для чётной степени это неверно: \(x^2 + 1\).</p>
+    </details>
+
+    <!-- 4. Вейерштрасс -->
+    <h2 id="weierstrass">4. Теоремы Вейерштрасса</h2>
+    <div class="card">
+      <p style="margin-top:0"><b>Первая теорема.</b> Функция, непрерывная на отрезке \([a;\ b]\), ограничена на нём.</p>
+      <p style="margin-bottom:0"><b>Вторая теорема.</b> Функция, непрерывная на отрезке, достигает на нём своих наибольшего и наименьшего значений.</p>
+    </div>
+    <details class="why">
+      <summary>Доказательство первой теоремы</summary>
+      <p>От противного: пусть \(f\) не ограничена. Тогда для каждого \(n\) есть \(x_n \in [a;\ b]\) с \(|f(x_n)| &gt; n\). Последовательность \(x_n\) ограничена, по теореме Больцано — Вейерштрасса у неё есть подпоследовательность \(x_{n_k} \to c\). Так как отрезок <b>замкнут</b>, \(c \in [a;\ b]\). По непрерывности \(f(x_{n_k}) \to f(c)\) — конечное число. Но \(|f(x_{n_k})| &gt; n_k \to \infty\). Противоречие. \(\blacksquare\)</p>
+    </details>
+    <details class="why">
+      <summary>Доказательство второй теоремы</summary>
+      <p>По первой теореме \(M = \sup f\) конечен. Пусть он не достигается: \(f(x) &lt; M\) всюду. Тогда функция \(g(x) = \frac{1}{M - f(x)}\) непрерывна на \([a;\ b]\) (знаменатель не обращается в ноль) и, по первой теореме, ограничена: \(g \le K\). Отсюда \(M - f(x) \ge \frac{1}{K}\), то есть \(f(x) \le M - \frac{1}{K}\) — меньшее число оказалось верхней границей. Противоречие с тем, что \(M\) — точная верхняя грань. \(\blacksquare\)</p>
+    </details>
+    <div class="card">
+      <p style="margin-top:0"><b>Все условия нужны:</b></p>
+      <ul style="margin-bottom:0">
+        <li>\(\frac{1}{x}\) на \((0;\ 1]\) — непрерывна, но не ограничена: промежуток не замкнут.</li>
+        <li>\(x\) на \((0;\ 1)\) — ограничена, но не достигает ни \(\sup = 1\), ни \(\inf = 0\).</li>
+        <li>\(x\) на \([0;\ +\infty)\) — не ограничена: промежуток не ограничен.</li>
+        <li>\(f(x) = \frac{1}{x}\) при \(x \ne 0\), \(f(0) = 0\) на \([-1;\ 1]\) — отрезок есть, но нет непрерывности.</li>
+      </ul>
+    </div>
+
+    <!-- 5. Равномерная непрерывность -->
+    <h2 id="uniform">5. Равномерная непрерывность <span class="track math">Математика</span></h2>
+    <p>Сравните два определения — отличаются они только <b>порядком кванторов</b>:</p>
+    <div class="card">
+      <p style="margin-top:0"><b>Непрерывность на \(X\):</b> \(\forall x_0 \in X \;\; \forall \varepsilon &gt; 0 \;\; \exists \delta &gt; 0 \;\; \forall x \in X\colon\; |x - x_0| &lt; \delta \Rightarrow |f(x) - f(x_0)| &lt; \varepsilon\).</p>
+      <p style="margin-bottom:0"><b>Равномерная непрерывность:</b> \(\forall \varepsilon &gt; 0 \;\; \exists \delta &gt; 0 \;\; \forall x, y \in X\colon\; |x - y| &lt; \delta \Rightarrow |f(x) - f(y)| &lt; \varepsilon\).</p>
+    </div>
+    <p>В первом случае \(\delta\) выбирается <b>после</b> точки и может от неё зависеть. Во втором одно \(\delta\) должно годиться сразу для всех точек. График ниже показывает, какое наибольшее \(\delta\) подходит в каждой точке \(x_0\). Если эти значения не отделены от нуля, общего \(\delta\) нет.</p>
+    <div class="card">
+      <label>Функция:
+        <select id="un-sel">
+          <option value="0">x² на [0; 3]</option>
+          <option value="1">x² на [0; +∞)</option>
+          <option value="2">1/x на (0; 1]</option>
+          <option value="3">√x на [0; 4]</option>
+          <option value="4">sin(1/x) на (0; 1]</option>
+          <option value="5">sin x на ℝ</option>
+        </select>
+      </label>
+      <div class="venn-row">
+        <figure><canvas class="plot" id="un-f" aria-label="График функции"></canvas><figcaption>\(y = f(x)\)</figcaption></figure>
+        <figure><canvas class="plot" id="un-d" aria-label="Наибольшее подходящее δ в каждой точке"></canvas><figcaption>наибольшее подходящее \(\delta(x_0)\)</figcaption></figure>
+      </div>
+      <div class="sliders">
+        <div class="slider"><label for="un-eps">\(\varepsilon\)</label><input type="range" id="un-eps" min="0" max="100" value="40"><output id="un-eps-out"></output></div>
+      </div>
+      <div class="readout" id="un-out" aria-live="polite"></div>
+    </div>
+
+    <p><b>Теорема Кантора.</b> Функция, непрерывная на <b>отрезке</b>, равномерно непрерывна на нём.</p>
+    <ol class="steps" data-reveal>
+      <li>
+        <div class="formula">\[ \exists \varepsilon &gt; 0 \;\; \forall \delta &gt; 0 \;\; \exists x, y\colon\; |x - y| &lt; \delta \land |f(x) - f(y)| \ge \varepsilon \]</div>
+        <div class="why-line">От противного: записываем <a href="logic.html#negation">отрицание</a> равномерной непрерывности.</div>
+      </li>
+      <li>
+        <div class="formula">\[ \delta = \tfrac{1}{n}\colon\quad |x_n - y_n| &lt; \tfrac{1}{n}, \quad |f(x_n) - f(y_n)| \ge \varepsilon \]</div>
+        <div class="why-line">Берём \(\delta = 1, \frac{1}{2}, \frac{1}{3}, \ldots\) и получаем две последовательности точек отрезка.</div>
+      </li>
+      <li>
+        <div class="formula">\[ x_{n_k} \to c \in [a;\ b], \qquad y_{n_k} \to c \]</div>
+        <div class="why-line">По Больцано — Вейерштрассу у \(x_n\) есть сходящаяся подпоследовательность; предел лежит в отрезке (он замкнут). Так как \(|x_n - y_n| \to 0\), соответствующие \(y_{n_k}\) сходятся туда же.</div>
+      </li>
+      <li>
+        <div class="formula">\[ |f(x_{n_k}) - f(y_{n_k})| \to |f(c) - f(c)| = 0 \]</div>
+        <div class="why-line">По непрерывности в точке \(c\) (определение Гейне) разность стремится к нулю — а она всё время не меньше \(\varepsilon\). Противоречие. \(\blacksquare\)</div>
+      </li>
+    </ol>
+    <details class="why">
+      <summary>Удобный достаточный признак: условие Липшица</summary>
+      <p>Если \(|f(x) - f(y)| \le L|x - y|\) для всех \(x, y\), то подходит \(\delta = \frac{\varepsilon}{L}\) — функция равномерно непрерывна. По теореме Лагранжа это выполнено, если производная ограничена: \(|f'| \le L\). Поэтому \(\sin x\) равномерно непрерывна на всей прямой (\(|\cos x| \le 1\)), а \(x^2\) — на любом отрезке.</p>
+      <p>Обратное неверно: \(\sqrt{x}\) на \([0;\ 4]\) равномерно непрерывна (по Кантору), хотя производная в нуле не ограничена.</p>
+    </details>
+
+    <!-- 6. Приложения -->
+    <h2 id="applications">6. Приложения</h2>
+    <div class="card">
+      <p style="margin-top:0"><span class="track tech">Техника</span> <b>Надёжный поиск корней.</b> Бисекция медленнее метода Ньютона (одна двоичная цифра за шаг: 10 шагов дают точность \(\approx 10^{-3}\), 20 шагов — \(10^{-6}\)), зато <b>гарантированно</b> сходится для любой непрерывной функции со сменой знака. Поэтому в инженерных программах её используют как «страховку» для более быстрых методов.</p>
+      <p style="margin-bottom:0"><span class="track econ">Экономика</span> <b>Существование равновесной цены.</b> Пусть избыточный спрос \(E(p) = D(p) - S(p)\) непрерывен, при низкой цене положителен (спрос больше предложения), а при высокой отрицателен. По теореме Больцано — Коши найдётся цена \(p^*\), при которой \(E(p^*) = 0\), — равновесие существует. А найти её можно той же бисекцией.</p>
+    </div>
+
+    <!-- 7. Тренажёр -->
+    <h2 id="practice">7. Тренажёр</h2>
+    <div class="card">
+      <div class="row" style="justify-content:space-between">
+        <label>Режим:
+          <select id="mode">
+            <option value="point">Классифицируйте точку</option>
+            <option value="param">Подберите параметр</option>
+            <option value="tf">Верно или неверно?</option>
+          </select>
+        </label>
+        <div class="stats" id="stats"></div>
+      </div>
+      <div class="task-eq" id="task"></div>
+      <div id="area"></div>
+      <div class="feedback" id="feedback" aria-live="polite"></div>
+      <div class="solution" id="solution"></div>
+      <div class="row" style="margin-top:12px">
+        <button type="button" id="solution-btn">Показать решение</button>
+        <button type="button" class="primary" id="new-task-btn">Новая задача</button>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site">
+    <div class="wrap">Прогресс в тренажёре хранится только в вашем браузере.</div>
+  </footer>
+
+  <script src="../vendor/katex/katex.min.js"></script>
+  <script src="../vendor/katex/contrib/auto-render.min.js"></script>
+  <script src="../assets/js/math-render.js"></script>
+  <script src="../assets/js/steps.js"></script>
+  <script src="../assets/js/plot.js"></script>
+  <script src="../assets/js/expr.js"></script>
+  <script src="../assets/js/limits-core.js"></script>
+  <script src="../assets/js/cont-core.js"></script>
+  <script src="../assets/js/continuity.js"></script>
+  <script src="../assets/js/tutor-config.js"></script>
+  <script src="../assets/js/tutor.js"></script>
+</body>
+</html>

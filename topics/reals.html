@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Вещественные числа</title>
+  <meta name="description" content="Вещественные числа: дыры в рациональных числах, аксиома полноты, sup и inf, принцип Архимеда, плотность ℚ, вложенные отрезки. Интерактивная числовая прямая и тренажёр.">
+  <link rel="stylesheet" href="../vendor/katex/katex.min.css">
+  <link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+  <header class="site">
+    <div class="wrap">
+      <a class="logo" href="../index.html">Математика по шагам</a>
+      <nav><a href="../index.html">Все темы</a></nav>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <h1>Вещественные числа</h1>
+    <p class="lead">Фундамент анализа. Почему рациональных чисел мало, что такое аксиома полноты и почему на ней держатся все теоремы о пределах и непрерывных функциях.</p>
+    <p class="tracks">
+      <span class="track math">Математика — обязательно целиком</span>
+      <span class="track tech">Техника — §1, 3, 6</span>
+    </p>
+
+    <ul class="toc">
+      <li><a href="#holes">Дыры в ℚ</a></li>
+      <li><a href="#axiom">Аксиома полноты</a></li>
+      <li><a href="#sup">sup и inf</a></li>
+      <li><a href="#existence">Существование sup</a></li>
+      <li><a href="#corollaries">Следствия</a></li>
+      <li><a href="#practice">Тренажёр</a></li>
+    </ul>
+
+    <!-- 1. Дыры -->
+    <h2 id="holes">1. Зачем нужны вещественные числа: дыры в \(\mathbb{Q}\)</h2>
+    <p>Рациональных чисел «много»: между любыми двумя есть третье. Но в них есть <b>дыры</b>. Число \(\sqrt{2}\) не рационально (доказательство — в теме <a href="logic.html#proofs">«Логика»</a>), а значит, на «рациональной прямой» на его месте пусто.</p>
+    <p>Последовательность \(1;\ 1{,}4;\ 1{,}41;\ 1{,}414;\ \ldots\) (десятичные приближения \(\sqrt{2}\)) состоит из рациональных чисел, её члены неограниченно сближаются друг с другом — но в \(\mathbb{Q}\) ей <b>не к чему</b> сходиться. Анализ на такой прямой невозможен: нельзя было бы доказать даже, что у уравнения \(x^2 = 2\) есть решение.</p>
+    <details class="why">
+      <summary>Почему у множества \(\{x \in \mathbb{Q} : x^2 &lt; 2\}\) нет точной верхней грани в \(\mathbb{Q}\)?</summary>
+      <p>Пусть рациональное \(s &gt; 0\) — его точная верхняя грань. Так как \(s^2 \ne 2\) (\(\sqrt{2}\) иррационален), остаются два случая.</p>
+      <p>Если \(s^2 &lt; 2\), то для малого рационального \(h &gt; 0\) ещё \((s + h)^2 &lt; 2\) — значит, \(s + h\) в множестве и \(s\) не верхняя граница. Если \(s^2 &gt; 2\), то для малого \(h\) ещё \((s - h)^2 &gt; 2\) — значит, \(s - h\) тоже верхняя граница, и \(s\) не наименьшая. Противоречие в обоих случаях.</p>
+    </details>
+
+    <!-- 2. Аксиома -->
+    <h2 id="axiom">2. Аксиома полноты</h2>
+    <p>Вещественные числа задаются аксиомами: это поле (сложение, умножение и их свойства), упорядоченное (свойства \(\le\), согласованные с операциями), и в нём выполнена главная аксиома:</p>
+    <div class="card">
+      <p style="margin-top:0"><b>Аксиома полноты (непрерывности).</b> Если \(A, B \subset \mathbb{R}\) непусты и любой элемент \(A\) не больше любого элемента \(B\), то найдётся число \(c\), разделяющее их:</p>
+      <p style="margin-bottom:0">\[ \begin{gathered} \forall a \in A \;\; \forall b \in B\colon\; a \le b \\ \Downarrow \\ \exists c \in \mathbb{R} \;\; \forall a \in A \;\; \forall b \in B\colon\; a \le c \le b. \end{gathered} \]</p>
+    </div>
+    <p>Смысл: на прямой <b>нет дыр</b>. В \(\mathbb{Q}\) аксиома не выполнена: для \(A = \{x &gt; 0 : x^2 &lt; 2\}\) и \(B = \{x &gt; 0 : x^2 &gt; 2\}\) разделяющее число \(\sqrt{2}\) не рационально.</p>
+    <details class="why">
+      <summary>Остальные аксиомы (поле и порядок)</summary>
+      <p><b>Сложение и умножение:</b> коммутативность, ассоциативность, нейтральные элементы 0 и 1, противоположный \(-a\), обратный \(a^{-1}\) при \(a \ne 0\), дистрибутивность \(a(b + c) = ab + ac\).</p>
+      <p><b>Порядок:</b> для любых \(a, b\) верно \(a \le b\) или \(b \le a\); из \(a \le b\) и \(b \le a\) следует \(a = b\); транзитивность; \(a \le b \Rightarrow a + c \le b + c\); \(0 \le a,\ 0 \le b \Rightarrow 0 \le ab\).</p>
+      <p>Всем этим аксиомам, кроме полноты, удовлетворяет и \(\mathbb{Q}\). Вся разница между \(\mathbb{Q}\) и \(\mathbb{R}\) — в одной аксиоме полноты.</p>
+    </details>
+
+    <!-- 3. sup и inf -->
+    <h2 id="sup">3. Верхние границы, sup и inf</h2>
+    <div class="card">
+      <p style="margin-top:0">Число \(M\) — <b>верхняя граница</b> множества \(A\), если \(\forall x \in A\colon x \le M\). Множество с верхней границей называется <b>ограниченным сверху</b>.</p>
+      <p><b>Точная верхняя грань</b> \(\sup A\) (супремум) — <b>наименьшая</b> из верхних границ. Аналогично \(\inf A\) (инфимум) — наибольшая из нижних границ.</p>
+      <p style="margin-bottom:0"><b>Рабочее определение</b> (им пользуются в доказательствах):</p>
+      <p>\[ \begin{aligned} s = \sup A \iff\; &amp;(1)\;\; \forall x \in A\colon\; x \le s, \\ &amp;(2)\;\; \forall \varepsilon &gt; 0 \;\; \exists x \in A\colon\; x &gt; s - \varepsilon. \end{aligned} \]</p>
+    </div>
+    <p>Условие (1) говорит, что \(s\) — верхняя граница, (2) — что любое меньшее число \(s - \varepsilon\) уже не граница. Подвигайте \(\varepsilon\):</p>
+
+    <div class="card">
+      <label>Множество:
+        <select id="nl-sel">
+          <option value="0">{1 − 1/n : n ∈ ℕ}</option>
+          <option value="1">(0; 1]</option>
+          <option value="2">{(−1)ⁿ + 1/n : n ∈ ℕ}</option>
+          <option value="3">{x ∈ ℚ : x² &lt; 2}</option>
+        </select>
+      </label>
+      <canvas class="plot numline" id="nl-plot" style="margin-top:12px" aria-label="Множество на числовой прямой, его верхние границы и супремум"></canvas>
+      <div class="legend">
+        <span><i style="background:var(--good-soft);height:10px"></i>все верхние границы</span>
+        <span><i style="background:var(--accent-soft);height:10px"></i>\((s - \varepsilon;\ s)\)</span>
+        <span style="color:var(--bad)">● <span style="color:var(--muted)">элемент правее \(s - \varepsilon\)</span></span>
+      </div>
+      <div class="sliders">
+        <div class="slider"><label for="nl-eps">\(\varepsilon\)</label><input type="range" id="nl-eps" min="0" max="100" value="25"><output id="nl-eps-out"></output></div>
+      </div>
+      <div class="readout" id="nl-readout" aria-live="polite"></div>
+    </div>
+
+    <details class="why">
+      <summary>Чем sup отличается от max?</summary>
+      <p><b>Максимум</b> — наибольший элемент, он обязан <b>принадлежать</b> множеству. Супремум может и не принадлежать: у \((0;\ 1)\) максимума нет, а \(\sup = 1\).</p>
+      <p>Если максимум есть, то он и есть супремум. Обратно: если \(\sup A \in A\), то это максимум.</p>
+    </details>
+    <details class="why">
+      <summary>А если множество не ограничено или пусто?</summary>
+      <p>Для неограниченного сверху множества пишут \(\sup A = +\infty\) (снизу — \(\inf A = -\infty\)). Это соглашение в расширенной прямой \(\overline{\mathbb{R}} = \mathbb{R} \cup \{-\infty, +\infty\}\). Для пустого множества по соглашению \(\sup \varnothing = -\infty\), \(\inf \varnothing = +\infty\): любое число является его верхней границей.</p>
+    </details>
+    <p class="small-note">Как построить отрицание рабочего определения sup, разобрано по шагам в <a href="logic.html#negation">теме «Логика»</a>.</p>
+
+    <!-- 4. Существование sup -->
+    <h2 id="existence">4. Теорема о существовании точной грани</h2>
+    <p><b>Теорема.</b> У любого непустого ограниченного сверху множества \(A \subset \mathbb{R}\) есть точная верхняя грань.</p>
+    <ol class="steps" data-reveal>
+      <li>
+        <div class="formula">\[ B = \{ M \in \mathbb{R} : M \text{ — верхняя граница } A \} \ne \varnothing \]</div>
+        <div class="why-line">Соберём все верхние границы в множество \(B\). Оно непусто, потому что \(A\) ограничено сверху.</div>
+      </li>
+      <li>
+        <div class="formula">\[ \forall a \in A \;\; \forall M \in B\colon\; a \le M \]</div>
+        <div class="why-line">Это просто определение верхней границы: каждый элемент \(A\) не больше каждого элемента \(B\).</div>
+      </li>
+      <li>
+        <div class="formula">\[ \exists c\colon\; a \le c \le M \quad \forall a \in A,\ \forall M \in B \]</div>
+        <div class="why-line">Условия аксиомы полноты выполнены — она даёт разделяющее число \(c\).</div>
+      </li>
+      <li>
+        <div class="formula">\[ c \in B \quad \text{и} \quad c \le M \;\; \forall M \in B \]</div>
+        <div class="why-line">Левое неравенство \(a \le c\) значит, что \(c\) — верхняя граница. Правое \(c \le M\) — что она не больше любой другой. Значит, \(c\) — наименьшая верхняя граница: \(c = \sup A\). \(\blacksquare\)</div>
+      </li>
+    </ol>
+
+    <!-- 5. Следствия -->
+    <h2 id="corollaries">5. Следствия аксиомы полноты</h2>
+
+    <h3>Принцип Архимеда</h3>
+    <p>Множество натуральных чисел не ограничено сверху: \(\forall x \in \mathbb{R}\;\; \exists n \in \mathbb{N}\colon\; n &gt; x\). Казалось бы, очевидно, но это следствие именно полноты.</p>
+    <ol class="steps" data-reveal>
+      <li>
+        <div class="formula">\[ \text{Пусть } \mathbb{N} \text{ ограничено сверху, } s = \sup \mathbb{N} \]</div>
+        <div class="why-line">От противного. Супремум существует по теореме из §4.</div>
+      </li>
+      <li>
+        <div class="formula">\[ \exists n \in \mathbb{N}\colon\; n &gt; s - 1 \]</div>
+        <div class="why-line">Условие (2) из рабочего определения sup с \(\varepsilon = 1\).</div>
+      </li>
+      <li>
+        <div class="formula">\[ n + 1 &gt; s, \quad n + 1 \in \mathbb{N} \qquad \text{— противоречие} \;\blacksquare \]</div>
+        <div class="why-line">Нашли натуральное число больше верхней границы \(s\) всех натуральных.</div>
+      </li>
+    </ol>
+    <p>Следствие: \(\forall \varepsilon &gt; 0\;\; \exists n\colon \frac{1}{n} &lt; \varepsilon\) (возьмите \(n &gt; \frac{1}{\varepsilon}\)). Именно поэтому \(\frac{1}{n} \to 0\).</p>
+
+    <details class="why">
+      <summary>Плотность \(\mathbb{Q}\): между любыми двумя числами есть рациональное</summary>
+      <p>Пусть \(x &lt; y\). По Архимеду выберем \(n &gt; \frac{1}{y - x}\), то есть \(\frac{1}{n} &lt; y - x\): «шаг» \(\frac{1}{n}\) меньше длины промежутка. Пусть \(m\) — наименьшее целое, большее \(nx\) (оно есть, опять по Архимеду). Тогда \(\frac{m - 1}{n} \le x &lt; \frac{m}{n}\), и</p>
+      <p>\[ \frac{m}{n} \le x + \frac{1}{n} &lt; x + (y - x) = y. \]</p>
+      <p>Итак, \(x &lt; \frac{m}{n} &lt; y\). \(\blacksquare\) Иррациональные числа тоже плотны: примените это к \(\frac{x}{\sqrt 2}\) и \(\frac{y}{\sqrt 2}\).</p>
+    </details>
+
+    <details class="why">
+      <summary>Существование \(\sqrt{2}\) в \(\mathbb{R}\)</summary>
+      <p>Пусть \(s = \sup\{x &gt; 0 : x^2 &lt; 2\}\) — он существует (множество непусто и ограничено числом 2). Те же оценки, что в §1, показывают: \(s^2 &lt; 2\) невозможно (\(s\) не был бы границей), \(s^2 &gt; 2\) невозможно (\(s\) не был бы наименьшей границей). Значит, \(s^2 = 2\). В \(\mathbb{Q}\) этот аргумент ломается на первом шаге: супремума там нет.</p>
+    </details>
+
+    <h3>Принцип вложенных отрезков (Кантор)</h3>
+    <p>Если \([a_1; b_1] \supset [a_2; b_2] \supset \ldots\), то у всех отрезков есть общая точка. Если же длины \(b_n - a_n \to 0\), такая точка ровно одна.</p>
+    <details class="why">
+      <summary>Доказательство и почему важно, что это <b>отрезки</b></summary>
+      <p>Из вложенности \(a_n \le a_{n+k} \le b_{n+k} \le b_m\) для любых \(n, m\): каждый левый конец не больше каждого правого. Пусть \(c = \sup_n a_n\). Тогда \(a_n \le c\) (граница) и \(c \le b_m\) (так как каждое \(b_m\) — верхняя граница левых концов, а \(c\) — наименьшая). Значит, \(c \in [a_n; b_n]\) для всех \(n\). \(\blacksquare\)</p>
+      <p>Для <b>интервалов</b> утверждение неверно: \(\left(0;\ \frac{1}{n}\right)\) вложены, но общих точек нет (любое \(x &gt; 0\) выпадает, когда \(\frac{1}{n} &lt; x\)). Для \(\mathbb{Q}\) неверно и для отрезков: отрезки с рациональными концами, стягивающиеся к \(\sqrt{2}\), не имеют общей рациональной точки.</p>
+    </details>
+    <p class="small-note">Эти факты — основа теорем Вейерштрасса и Больцано — Вейерштрасса в теме <a href="limits.html#theorems">«Пределы»</a>, там же — <a href="limits.html#limsup">верхний и нижний пределы</a>.</p>
+
+    <!-- 6. Тренажёр -->
+    <h2 id="practice">6. Тренажёр</h2>
+    <div class="card" id="pair-trainer"></div>
+  </main>
+
+  <footer class="site">
+    <div class="wrap">Прогресс в тренажёре хранится только в вашем браузере.</div>
+  </footer>
+
+  <script src="../vendor/katex/katex.min.js"></script>
+  <script src="../vendor/katex/contrib/auto-render.min.js"></script>
+  <script src="../assets/js/math-render.js"></script>
+  <script src="../assets/js/steps.js"></script>
+  <script src="../assets/js/plot.js"></script>
+  <script src="../assets/js/expr.js"></script>
+  <script src="../assets/js/limits-core.js"></script>
+  <script src="../assets/js/reals-core.js"></script>
+  <script src="../assets/js/pair-trainer.js"></script>
+  <script src="../assets/js/reals.js"></script>
+  <script src="../assets/js/tutor-config.js"></script>
+  <script src="../assets/js/tutor.js"></script>
+</body>
+</html>

@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Логика и доказательства</title>
+  <meta name="description" content="Язык математики: высказывания и таблицы истинности, кванторы и построение отрицаний, методы доказательства. Лаборатория и тренажёр.">
+  <link rel="stylesheet" href="../vendor/katex/katex.min.css">
+  <link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+  <header class="site">
+    <div class="wrap">
+      <a class="logo" href="../index.html">Математика по шагам</a>
+      <nav><a href="../index.html">Все темы</a></nav>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <h1>Логика, кванторы и доказательства</h1>
+    <p class="lead">Фундамент: язык, на котором написана вся высшая математика. Здесь учимся читать определения с \(\forall\) и \(\exists\), безошибочно строить отрицания и понимать, как устроено доказательство.</p>
+    <p class="tracks">
+      <span class="track math">Математика — обязательно целиком</span>
+      <span class="track tech">Техника — §1, 4, 5</span>
+    </p>
+
+    <ul class="toc">
+      <li><a href="#props">Высказывания</a></li>
+      <li><a href="#lab">Лаборатория</a></li>
+      <li><a href="#laws">Законы логики</a></li>
+      <li><a href="#quantifiers">Кванторы</a></li>
+      <li><a href="#negation">Отрицание</a></li>
+      <li><a href="#proofs">Методы доказательства</a></li>
+      <li><a href="#practice">Тренажёр</a></li>
+    </ul>
+
+    <!-- 1. Высказывания -->
+    <h2 id="props">1. Высказывания и логические связки</h2>
+    <p><b>Высказывание</b> — утверждение, которое либо истинно (1), либо ложно (0). «\(7\) — простое число» — высказывание (истинное). «\(x &gt; 2\)» — не высказывание, пока не сказано, что такое \(x\). Из простых высказываний связками собирают сложные:</p>
+    <div class="card" id="connectives"></div>
+
+    <details class="why">
+      <summary>Почему \(0 \Rightarrow q\) всегда истинно? Ведь «из лжи следует что угодно» звучит странно</summary>
+      <p>Импликация \(p \Rightarrow q\) — это <b>обещание</b>: «если \(p\), то \(q\)». Например: «если сдашь сессию без троек (\(p\)), получишь повышенную стипендию (\(q\))». Когда обещание нарушено? Только если сессия сдана, а стипендии нет: \(p = 1,\ q = 0\).</p>
+      <p>Если сессия не сдана (\(p = 0\)), обещание не нарушено, что бы ни случилось со стипендией. Поэтому при \(p = 0\) импликация истинна.</p>
+      <p>Это не формальность. Утверждение «для всех \(x\): если \(x &gt; 2\), то \(x^2 &gt; 4\)» мы считаем верным. Значит, и при \(x = 0\) (посылка ложна) импликация должна быть истинной — иначе утверждение «для всех \(x\)» рухнуло бы.</p>
+    </details>
+    <details class="why">
+      <summary>«Необходимо» и «достаточно» — что из них что?</summary>
+      <p>Если \(p \Rightarrow q\), то \(p\) — <b>достаточное</b> условие для \(q\) (его хватает, чтобы \(q\) выполнилось), а \(q\) — <b>необходимое</b> условие для \(p\) (без него \(p\) невозможно).</p>
+      <p>Пример: «число делится на 4 \(\Rightarrow\) число чётное». Делимость на 4 достаточна для чётности; чётность необходима для делимости на 4, но не достаточна (6 чётно, но на 4 не делится).</p>
+      <p>«Необходимо и достаточно» = «тогда и только тогда» = \(\Leftrightarrow\). Доказывается в две стороны.</p>
+    </details>
+
+    <!-- 2. Лаборатория -->
+    <h2 id="lab">2. Лаборатория: таблицы истинности</h2>
+    <p>Введите формулу — получите таблицу истинности. Введите вторую — проверим, равносильны ли они, и покажем набор, на котором они различаются.</p>
+    <div class="card">
+      <div class="expr-input">
+        <label for="lab-f" style="font-weight:600">\(F =\)</label>
+        <input id="lab-f" value="!(p & q)" spellcheck="false" autocomplete="off" autocapitalize="off" aria-label="Формула F">
+      </div>
+      <div class="expr-input" style="margin-top:8px">
+        <label for="lab-g" style="font-weight:600">\(G =\)</label>
+        <input id="lab-g" value="!p | !q" spellcheck="false" autocomplete="off" autocapitalize="off" aria-label="Формула G (необязательно)" placeholder="необязательно">
+      </div>
+      <p class="small-note" style="margin-top:8px">Переменные — латинские буквы. Операции: <code>!</code> или <code>не</code> (¬), <code>&amp;</code> или <code>и</code> (∧), <code>|</code> или <code>или</code> (∨), <code>=&gt;</code> (⇒), <code>&lt;=&gt;</code> (⇔).</p>
+      <div id="lab-out" aria-live="polite"></div>
+    </div>
+
+    <!-- 3. Законы -->
+    <h2 id="laws">3. Законы логики</h2>
+    <p>Каждый закон — это пара равносильных формул. Нажмите «Проверить», чтобы увидеть таблицу истинности в лаборатории.</p>
+    <ul class="table-list" id="laws-list">
+      <li data-f="!(p & q)" data-g="!p | !q">\[ \neg(p \land q) \equiv \neg p \lor \neg q \]<span class="small-note">Закон де Моргана</span></li>
+      <li data-f="!(p | q)" data-g="!p & !q">\[ \neg(p \lor q) \equiv \neg p \land \neg q \]<span class="small-note">Закон де Моргана</span></li>
+      <li data-f="p => q" data-g="!q => !p">\[ (p \Rightarrow q) \equiv (\neg q \Rightarrow \neg p) \]<span class="small-note">Контрапозиция — основа доказательства от противного</span></li>
+      <li data-f="p => q" data-g="!p | q">\[ (p \Rightarrow q) \equiv \neg p \lor q \]<span class="small-note">Импликация через «или»</span></li>
+      <li data-f="!(p => q)" data-g="p & !q">\[ \neg(p \Rightarrow q) \equiv p \land \neg q \]<span class="small-note">Отрицание импликации — понадобится для определений вида «если…, то…»</span></li>
+      <li data-f="p & (q | r)" data-g="(p & q) | (p & r)">\[ p \land (q \lor r) \equiv (p \land q) \lor (p \land r) \]<span class="small-note">Дистрибутивность</span></li>
+      <li data-f="p => q" data-g="q => p">\[ (p \Rightarrow q) \not\equiv (q \Rightarrow p) \]<span class="small-note"><b>Ловушка:</b> обратное утверждение не равносильно прямому</span></li>
+    </ul>
+
+    <!-- 4. Кванторы -->
+    <h2 id="quantifiers">4. Кванторы</h2>
+    <div class="card">
+      <p style="margin-top:0">\(\forall x\ P(x)\) — «для любого \(x\) верно \(P(x)\)» (квантор всеобщности, перевёрнутая A от <i>All</i>).</p>
+      <p style="margin-bottom:0">\(\exists x\ P(x)\) — «существует \(x\), для которого верно \(P(x)\)» (квантор существования, перевёрнутая E от <i>Exists</i>).</p>
+    </div>
+    <p><b>Ограниченные кванторы.</b> Запись \(\forall \varepsilon &gt; 0\ P\) — сокращение для \(\forall \varepsilon\ (\varepsilon &gt; 0 \Rightarrow P)\), а \(\exists \varepsilon &gt; 0\ P\) — для \(\exists \varepsilon\ (\varepsilon &gt; 0 \land P)\).</p>
+
+    <p><b>Порядок кванторов важен.</b> Сравните:</p>
+    <div class="card">
+      <p style="margin-top:0">\[ \forall x \in \mathbb{R} \;\; \exists y \in \mathbb{R} \colon\; y &gt; x \]</p>
+      <p>— верно: для каждого \(x\) подходит \(y = x + 1\);</p>
+      <p>\[ \exists y \in \mathbb{R} \;\; \forall x \in \mathbb{R} \colon\; y &gt; x \]</p>
+      <p style="margin-bottom:0">— неверно: это значило бы, что есть число больше всех чисел.</p>
+    </div>
+    <details class="why">
+      <summary>Как удобно думать о кванторах: игра с противником</summary>
+      <p>Представьте игру. Квантор \(\forall\) — ход <b>противника</b>: он выбирает значение, самое неудобное для вас. Квантор \(\exists\) — <b>ваш</b> ход: вы выбираете значение, зная всё, что противник выбрал раньше. Утверждение верно, если у вас есть выигрышная стратегия.</p>
+      <p>В «\(\forall x\ \exists y\colon y &gt; x\)» противник называет \(x\), а вы отвечаете \(y = x + 1\) — выигрыш. В «\(\exists y\ \forall x\)» вы ходите первым и называете \(y\), а противник отвечает \(x = y\) — проигрыш.</p>
+      <p>Определение предела — та же игра: противник даёт \(\varepsilon\), вы отвечаете номером \(N\), противник выбирает \(n \ge N\), и вы должны оказаться в коридоре. Поэтому \(N\) может зависеть от \(\varepsilon\), но не от \(n\).</p>
+    </details>
+
+    <!-- 5. Отрицание -->
+    <h2 id="negation">5. Как построить отрицание</h2>
+    <p>Самый важный практический навык: на нём держатся доказательства от противного и все «докажите, что не…». Алгоритм механический — проталкиваем \(\neg\) слева направо:</p>
+    <div class="card">
+      <p style="margin-top:0">\[ \neg\,\forall x\ P \equiv \exists x\ \neg P, \qquad \neg\,\exists x\ P \equiv \forall x\ \neg P, \]</p>
+      <p>\[ \neg(A \land B) \equiv \neg A \lor \neg B, \qquad \neg(A \lor B) \equiv \neg A \land \neg B, \]</p>
+      <p>\[ \neg(A \Rightarrow B) \equiv A \land \neg B. \]</p>
+      <p style="margin-bottom:0">Ограничения кванторов (\(\varepsilon &gt; 0\), \(n \ge N\), \(x \in X\)) <b>не меняются</b>. В конце отрицаем условие: \(&lt;\) на \(\ge\), \(\le\) на \(&gt;\), \(=\) на \(\ne\).</p>
+    </div>
+    <details class="why">
+      <summary>Почему ограничения кванторов не отрицаются?</summary>
+      <p>Распишем: \(\neg\,\forall \varepsilon &gt; 0\ P = \neg\,\forall \varepsilon\,(\varepsilon &gt; 0 \Rightarrow P) = \exists \varepsilon\ \neg(\varepsilon &gt; 0 \Rightarrow P) = \exists \varepsilon\,(\varepsilon &gt; 0 \land \neg P) = \exists \varepsilon &gt; 0\ \neg P.\)</p>
+      <p>Условие \(\varepsilon &gt; 0\) сохранилось благодаря правилу отрицания импликации. По смыслу: «не для всех положительных \(\varepsilon\)» значит «найдётся положительное \(\varepsilon\), для которого не…», а вовсе не «найдётся \(\varepsilon \le 0\)».</p>
+    </details>
+
+    <div class="card">
+      <label>Определение:
+        <select id="neg-sel"></select>
+      </label>
+      <div class="task-eq" id="neg-statement"></div>
+      <ol class="steps-list" id="neg-steps"></ol>
+      <div class="row">
+        <button type="button" class="primary" id="neg-next">Следующий шаг</button>
+        <button type="button" id="neg-all">Показать все шаги</button>
+        <button type="button" id="neg-reset">Сначала</button>
+      </div>
+      <div class="readout" id="neg-meaning"></div>
+    </div>
+
+    <!-- 6. Доказательства -->
+    <h2 id="proofs">6. Методы доказательства</h2>
+
+    <h3>Прямое доказательство</h3>
+    <p>Из посылки шаг за шагом выводим заключение. <i>Сумма двух чётных чисел чётна:</i> \(a = 2k,\ b = 2m \Rightarrow a + b = 2(k + m)\). \(\blacksquare\)</p>
+
+    <h3>Контрапозиция</h3>
+    <p>Вместо \(p \Rightarrow q\) доказываем равносильное \(\neg q \Rightarrow \neg p\). <i>Если \(n^2\) чётно, то \(n\) чётно.</i> Докажем: если \(n\) нечётно, то \(n^2\) нечётно. Действительно, \(n = 2k + 1 \Rightarrow n^2 = 4k^2 + 4k + 1 = 2(2k^2 + 2k) + 1\). \(\blacksquare\)</p>
+
+    <h3>От противного</h3>
+    <p>Предполагаем, что утверждение ложно, и приходим к противоречию. Классика: <b>\(\sqrt{2}\) иррационально</b>.</p>
+    <ol class="steps" data-reveal>
+      <li>
+        <div class="formula">\[ \text{Пусть } \sqrt{2} = \frac{m}{n}, \quad m, n \in \mathbb{N}, \quad \text{дробь несократима.} \]</div>
+        <div class="why-line">Предположение, противоположное доказываемому. Любую дробь можно сократить, поэтому несократимость не ограничивает общности.</div>
+      </li>
+      <li>
+        <div class="formula">\[ m^2 = 2n^2 \]</div>
+        <div class="why-line">Возводим в квадрат и умножаем на \(n^2\). Значит, \(m^2\) чётно.</div>
+      </li>
+      <li>
+        <div class="formula">\[ m = 2k \]</div>
+        <div class="why-line">Если \(m^2\) чётно, то \(m\) чётно — это мы доказали выше контрапозицией.</div>
+      </li>
+      <li>
+        <div class="formula">\[ 4k^2 = 2n^2 \;\Rightarrow\; n^2 = 2k^2 \;\Rightarrow\; n \text{ чётно} \]</div>
+        <div class="why-line">Подставили \(m = 2k\) и рассуждаем так же.</div>
+      </li>
+      <li>
+        <div class="formula">\[ m \text{ и } n \text{ оба чётны} \quad \blacksquare \]</div>
+        <div class="why-line">Это противоречит несократимости дроби. Предположение привело к противоречию, значит, оно ложно: \(\sqrt{2} \notin \mathbb{Q}\).</div>
+      </li>
+    </ol>
+    <details class="why">
+      <summary>Ещё пример: простых чисел бесконечно много (Евклид)</summary>
+      <p>Пусть простых чисел конечное число: \(p_1, \ldots, p_k\). Рассмотрим \(N = p_1 p_2 \cdots p_k + 1\). При делении на любое \(p_i\) оно даёт остаток 1, то есть не делится ни на одно из них. Но у \(N &gt; 1\) есть простой делитель — и он не из нашего списка. Противоречие. \(\blacksquare\)</p>
+      <p class="note">Частая ошибка: считать, что само \(N\) простое. Это не так: \(2 \cdot 3 \cdot 5 \cdot 7 \cdot 11 \cdot 13 + 1 = 30031 = 59 \cdot 509\). Доказательство этого и не утверждает.</p>
+    </details>
+
+    <h3>Математическая индукция</h3>
+    <p>Чтобы доказать \(P(n)\) для всех \(n \in \mathbb{N}\), достаточно: <b>база</b> — доказать \(P(1)\); <b>шаг</b> — доказать \(P(k) \Rightarrow P(k + 1)\) для любого \(k\). Как домино: первая костяшка падает, и каждая роняет следующую.</p>
+    <p>Докажем, что \(1 + 2 + \ldots + n = \frac{n(n + 1)}{2}\):</p>
+    <ol class="steps" data-reveal>
+      <li>
+        <div class="formula">\[ n = 1\colon \quad 1 = \frac{1 \cdot 2}{2} \;\checkmark \]</div>
+        <div class="why-line">База индукции.</div>
+      </li>
+      <li>
+        <div class="formula">\[ \text{Пусть } 1 + \ldots + k = \frac{k(k + 1)}{2}. \]</div>
+        <div class="why-line">Предположение индукции: считаем формулу верной для какого-то \(k\).</div>
+      </li>
+      <li>
+        <div class="formula">\[ 1 + \ldots + k + (k + 1) = \frac{k(k + 1)}{2} + (k + 1) \]</div>
+        <div class="why-line">Сумма до \(k + 1\) — это сумма до \(k\) плюс ещё одно слагаемое. Подставляем предположение.</div>
+      </li>
+      <li>
+        <div class="formula">\[ = \frac{(k + 1)(k + 2)}{2} \qquad \blacksquare \]</div>
+        <div class="why-line">Вынесли \((k + 1)\): получилась та же формула для \(n = k + 1\). Шаг доказан, значит, формула верна для всех \(n\).</div>
+      </li>
+    </ol>
+    <details class="why">
+      <summary>Где ошибка: «все лошади одного цвета»</summary>
+      <p>«Доказательство»: в табуне из одной лошади все лошади одного цвета (база). Пусть любые \(k\) лошадей одного цвета. Возьмём \(k + 1\) лошадь. Уберём первую — оставшиеся \(k\) одного цвета. Уберём последнюю — оставшиеся \(k\) тоже одного цвета. Значит, все \(k + 1\) одного цвета?</p>
+      <p><b>Ошибка в шаге \(1 \to 2\).</b> Рассуждение опирается на то, что две группы по \(k\) лошадей <b>пересекаются</b>, и цвет «передаётся» через общую лошадь. При \(k + 1 = 2\) группы — это \(\{1\}\) и \(\{2\}\), они не пересекаются. Шаг должен работать для <b>каждого</b> \(k\), а здесь он ломается на самом первом.</p>
+    </details>
+
+    <h3>Контрпример</h3>
+    <p>Чтобы <b>опровергнуть</b> утверждение «для всех», достаточно <b>одного</b> контрпримера: это и есть его отрицание \(\exists x\ \neg P(x)\). А проверка многих частных случаев утверждение «для всех» <b>не доказывает</b>: \(n^2 + n + 41\) простое при \(n = 1, \ldots, 39\), но при \(n = 40\) равно \(41^2\).</p>
+
+    <!-- 7. Тренажёр -->
+    <h2 id="practice">7. Тренажёр</h2>
+    <div class="card">
+      <div class="row" style="justify-content:space-between">
+        <label>Режим:
+          <select id="mode">
+            <option value="neg">Постройте отрицание</option>
+            <option value="eq">Равносильны ли формулы?</option>
+            <option value="tf">Верно или неверно?</option>
+          </select>
+        </label>
+        <div class="stats" id="stats"></div>
+      </div>
+      <div class="task-eq" id="task"></div>
+      <div class="choices" id="choices"></div>
+      <div class="feedback" id="feedback" aria-live="polite"></div>
+      <div class="solution" id="solution"></div>
+      <div class="row" style="margin-top:12px">
+        <button type="button" class="primary" id="new-task-btn">Новая задача</button>
+        <button type="button" id="solution-btn">Показать решение</button>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site">
+    <div class="wrap">Прогресс в тренажёре хранится только в вашем браузере.</div>
+  </footer>
+
+  <script src="../vendor/katex/katex.min.js"></script>
+  <script src="../vendor/katex/contrib/auto-render.min.js"></script>
+  <script src="../assets/js/math-render.js"></script>
+  <script src="../assets/js/steps.js"></script>
+  <script src="../assets/js/logic-core.js"></script>
+  <script src="../assets/js/logic.js"></script>
+  <script src="../assets/js/tutor-config.js"></script>
+  <script src="../assets/js/tutor.js"></script>
+</body>
+</html>

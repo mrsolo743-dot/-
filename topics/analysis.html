@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Исследование функции</title>
+  <meta name="description" content="Исследование функции: монотонность и экстремумы, выпуклость и перегибы, асимптоты, полная схема и лаборатория, которая исследует любую функцию и строит таблицу знаков и график.">
+  <link rel="stylesheet" href="../vendor/katex/katex.min.css">
+  <link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+  <header class="site">
+    <div class="wrap">
+      <a class="logo" href="../index.html">Математика по шагам</a>
+      <nav><a href="../index.html">Все темы</a></nav>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <h1>Исследование функции</h1>
+    <p class="lead">Математический анализ, 1 семестр. Всё, что мы знаем о производных, собирается в один алгоритм: по формуле функции понять, как выглядит её график, где она растёт, где у неё вершины и куда она уходит на бесконечности.</p>
+    <p class="tracks">
+      <span class="track math">Математика — всё, включая доказательства</span>
+      <span class="track tech">Техника — §1–7</span>
+      <span class="track econ">Экономика — §1, 4–7</span>
+    </p>
+
+    <ul class="toc">
+      <li><a href="#mono">Экстремумы</a></li>
+      <li><a href="#convex">Выпуклость</a></li>
+      <li><a href="#asymptotes">Асимптоты</a></li>
+      <li><a href="#plan">Схема</a></li>
+      <li><a href="#lab">Лаборатория</a></li>
+      <li><a href="#applications">Приложения</a></li>
+      <li><a href="#practice">Тренажёр</a></li>
+    </ul>
+
+    <!-- 1. Монотонность и экстремумы -->
+    <h2 id="mono">1. Монотонность и экстремумы</h2>
+    <p>Из теоремы Лагранжа (тема <a href="derivative.html#theorems">«Производная»</a>): если \(f' &gt; 0\) на промежутке, функция там возрастает, если \(f' &lt; 0\) — убывает. Значит, менять направление функция может только там, где \(f' = 0\) или \(f'\) не существует. Такие точки называют <b>критическими</b>.</p>
+    <div class="card">
+      <p style="margin-top:0"><b>Необходимое условие</b> (Ферма): если \(x_0\) — точка экстремума и \(f'(x_0)\) существует, то \(f'(x_0) = 0\).</p>
+      <p><b>Достаточное условие 1</b> (смена знака): если \(f'\) при переходе через \(x_0\) меняет знак с «+» на «−», то это максимум; с «−» на «+» — минимум; если не меняет — экстремума нет.</p>
+      <p style="margin-bottom:0"><b>Достаточное условие 2</b> (вторая производная): если \(f'(x_0) = 0\) и \(f''(x_0) &gt; 0\), то это минимум; если \(f''(x_0) &lt; 0\) — максимум.</p>
+    </div>
+    <details class="why">
+      <summary>Откуда условие со второй производной (и что делать, если \(f''(x_0) = 0\))</summary>
+      <p>По <a href="taylor.html">формуле Тейлора</a> при \(f'(x_0) = 0\):</p>
+      <p>\[ f(x) - f(x_0) = \frac{f''(x_0)}{2} (x - x_0)^2 + o\big((x - x_0)^2\big). \]</p>
+      <p>Рядом с \(x_0\) знак правой части определяется первым слагаемым. При \(f''(x_0) &gt; 0\) разность положительна — значения больше, чем в \(x_0\): минимум.</p>
+      <p><b>Общий признак.</b> Пусть первая ненулевая производная в \(x_0\) имеет порядок \(k\). Если \(k\) чётно, то это экстремум (минимум при \(f^{(k)}(x_0) &gt; 0\)); если нечётно, экстремума нет. Например, у \(x^4\) в нуле \(k = 4\) — минимум, у \(x^3\) — \(k = 3\), экстремума нет.</p>
+    </details>
+    <details class="why">
+      <summary>Наибольшее и наименьшее значения на отрезке</summary>
+      <p>По теореме Вейерштрасса они существуют, если \(f\) непрерывна на \([a;\ b]\). Достигаются они либо во внутренней точке — тогда это точка локального экстремума, то есть критическая, — либо на конце. Алгоритм: найти критические точки внутри отрезка, вычислить \(f\) в них и на концах и выбрать наибольшее и наименьшее из этих чисел. Дополнительно проверять, max это или min, не нужно.</p>
+    </details>
+
+    <!-- 2. Выпуклость -->
+    <h2 id="convex">2. Выпуклость и точки перегиба</h2>
+    <div class="card">
+      <p style="margin-top:0">Функция <b>выпукла вниз</b> (\(\cup\)) на промежутке, если любая её хорда лежит не ниже графика:</p>
+      <p>\[ f\big(t x_1 + (1 - t) x_2\big) \le t f(x_1) + (1 - t) f(x_2), \quad t \in [0;\ 1]. \]</p>
+      <p>Если неравенство обратное, функция <b>выпукла вверх</b> (\(\cap\)). <b>Признак:</b> \(f'' &gt; 0 \Rightarrow \cup\), \(f'' &lt; 0 \Rightarrow \cap\).</p>
+      <p style="margin-bottom:0"><b>Точка перегиба</b> — точка, где выпуклость меняется. Там \(f'' = 0\) или не существует, но этого мало: нужна <b>смена знака</b> \(f''\) (у \(x^4\) в нуле \(f'' = 0\), а перегиба нет).</p>
+    </div>
+    <details class="why">
+      <summary>Почему при \(f'' &gt; 0\) график лежит над касательной</summary>
+      <p>Формула Тейлора с остатком Лагранжа:</p>
+      <p>\[ f(x) = \underbrace{f(x_0) + f'(x_0)(x - x_0)}_{\text{касательная}} + \frac{f''(\xi)}{2}(x - x_0)^2. \]</p>
+      <p>Последнее слагаемое неотрицательно, значит, график не ниже касательной в любой точке \(x_0\). Это и есть выпуклость вниз (её эквивалентное описание: «график над всеми касательными»). \(\blacksquare\)</p>
+    </details>
+    <details class="why">
+      <summary>Бонус: неравенство Йенсена и среднее арифметическое</summary>
+      <p>Для выпуклой вверх функции хорда лежит под графиком, и это обобщается на любое число точек: \(f\left(\frac{x_1 + \ldots + x_n}{n}\right) \ge \frac{f(x_1) + \ldots + f(x_n)}{n}\). Для \(f = \ln\) (\(f'' = -\frac{1}{x^2} &lt; 0\)) получаем \(\ln \frac{x_1 + \ldots + x_n}{n} \ge \ln \sqrt[n]{x_1 \cdots x_n}\) — неравенство между средним арифметическим и средним геометрическим.</p>
+    </details>
+
+    <!-- 3. Асимптоты -->
+    <h2 id="asymptotes">3. Асимптоты</h2>
+    <div class="card">
+      <p style="margin-top:0"><b>Вертикальная</b> \(x = c\): хотя бы один из односторонних пределов в \(c\) бесконечен. Искать её нужно в точках разрыва и на границах области определения.</p>
+      <p style="margin-bottom:0"><b>Наклонная</b> \(y = kx + b\) при \(x \to +\infty\) (или \(-\infty\)): \(f(x) - (kx + b) \to 0\). При \(k = 0\) асимптота горизонтальная.</p>
+      <p>\[ k = \lim_{x \to \infty} \frac{f(x)}{x}, \qquad b = \lim_{x \to \infty} \big(f(x) - kx\big). \]</p>
+    </div>
+    <details class="why">
+      <summary>Откуда формулы для \(k\) и \(b\)</summary>
+      <p>Если \(f(x) = kx + b + \alpha(x)\) с \(\alpha \to 0\), то, разделив на \(x\), получаем \(\frac{f(x)}{x} = k + \frac{b}{x} + \frac{\alpha}{x} \to k\). Зная \(k\), находим \(b = \lim (f(x) - kx)\). Обратно: если оба предела существуют и конечны, то \(f(x) - kx - b \to 0\), то есть асимптота есть. Пределы при \(+\infty\) и \(-\infty\) считают отдельно — асимптоты могут быть разными (у \(\operatorname{arctg} x\): \(y = \pm\frac{\pi}{2}\)).</p>
+    </details>
+
+    <!-- 4. Схема -->
+    <h2 id="plan">4. Схема полного исследования</h2>
+    <ol class="card" style="padding-left:40px">
+      <li>Область определения, точки разрыва.</li>
+      <li>Чётность, нечётность, периодичность (если есть, исследуем половину).</li>
+      <li>Нули и промежутки знакопостоянства.</li>
+      <li>Асимптоты: вертикальные и наклонные.</li>
+      <li>\(f'\): промежутки монотонности и экстремумы.</li>
+      <li>\(f''\): промежутки выпуклости и точки перегиба.</li>
+      <li>Сводная таблица и эскиз графика.</li>
+    </ol>
+
+    <!-- 5. Лаборатория -->
+    <h2 id="lab">5. Лаборатория: полное исследование любой функции</h2>
+    <p>Введите функцию — сайт пройдёт по схеме: найдёт производные формулами, а особые точки численно (в окне \(-10 \le x \le 10\)), построит таблицу знаков и график.</p>
+    <div class="card">
+      <div class="expr-input">
+        <label for="lab-f" style="font-weight:600">\(f(x) =\)</label>
+        <input id="lab-f" value="(x^2 + 1)/(x - 1)" spellcheck="false" autocomplete="off" autocapitalize="off" aria-label="Функция">
+      </div>
+      <div class="chips" id="lab-chips">
+        <button type="button">x^3 - 3x</button>
+        <button type="button">(x^2 + 1)/(x - 1)</button>
+        <button type="button">x^2 e^(-x)</button>
+        <button type="button">ln(x)/x</button>
+        <button type="button">x/(x^2 + 1)</button>
+        <button type="button">x e^(1/x)</button>
+        <button type="button">x + arctg x</button>
+        <button type="button">x^4 - 2x^2</button>
+      </div>
+      <div class="preview" id="lab-preview" aria-live="polite"></div>
+      <canvas class="plot" id="lab-plot" style="margin-top:12px" aria-label="График функции с особыми точками и асимптотами"></canvas>
+      <div class="legend">
+        <span style="color:var(--bad)">● <span style="color:var(--muted)">максимум</span></span>
+        <span style="color:var(--good)">● <span style="color:var(--muted)">минимум</span></span>
+        <span style="color:var(--curve-2)">● <span style="color:var(--muted)">перегиб</span></span>
+        <span><i class="dash" style="color:var(--axis)"></i>асимптоты</span>
+      </div>
+      <div id="lab-out" aria-live="polite"></div>
+    </div>
+
+    <!-- 6. Приложения -->
+    <h2 id="applications">6. Приложения: оптимизация</h2>
+    <div class="card">
+      <p style="margin-top:0"><span class="track tech">Техника</span> <b>Самая экономная банка.</b> Цилиндр объёма \(V\): площадь поверхности \(S(r) = 2\pi r^2 + \frac{2V}{r}\) (высота \(h = \frac{V}{\pi r^2}\)). Тогда \(S'(r) = 4\pi r - \frac{2V}{r^2} = 0\), откуда \(r^3 = \frac{V}{2\pi}\) и \(h = \frac{V}{\pi r^2} = 2r\). Самая экономная банка — та, у которой высота равна диаметру. \(S'' = 4\pi + \frac{4V}{r^3} &gt; 0\), значит, это минимум.</p>
+      <p style="margin-bottom:0"><span class="track econ">Экономика</span> <b>Максимум прибыли.</b> Прибыль \(\Pi(q) = R(q) - C(q)\) (выручка минус издержки). Условие \(\Pi'(q) = 0\) означает \(R'(q) = C'(q)\): <b>предельная выручка равна предельным издержкам</b> (MR = MC). Пример: \(R = 100q - q^2\), \(C = 20q + 300\). Тогда \(100 - 2q = 20\), \(q = 40\), прибыль \(\Pi(40) = 1300\). \(\Pi'' = -2 &lt; 0\) — максимум.</p>
+    </div>
+
+    <!-- 7. Тренажёр -->
+    <h2 id="practice">7. Тренажёр</h2>
+    <div class="card">
+      <div class="row" style="justify-content:space-between">
+        <label>Режим:
+          <select id="mode">
+            <option value="ext">Найдите экстремумы</option>
+            <option value="asy">Найдите асимптоты</option>
+            <option value="seg">Наибольшее и наименьшее на отрезке</option>
+            <option value="tf">Верно или неверно?</option>
+          </select>
+        </label>
+        <div class="stats" id="stats"></div>
+      </div>
+      <div class="task-eq" id="task"></div>
+      <div id="area"></div>
+      <div class="feedback" id="feedback" aria-live="polite"></div>
+      <div class="solution" id="solution"></div>
+      <div class="row" style="margin-top:12px">
+        <button type="button" id="solution-btn">Показать решение</button>
+        <button type="button" class="primary" id="new-task-btn">Новая задача</button>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site">
+    <div class="wrap">Прогресс в тренажёре хранится только в вашем браузере.</div>
+  </footer>
+
+  <script src="../vendor/katex/katex.min.js"></script>
+  <script src="../vendor/katex/contrib/auto-render.min.js"></script>
+  <script src="../assets/js/math-render.js"></script>
+  <script src="../assets/js/plot.js"></script>
+  <script src="../assets/js/expr.js"></script>
+  <script src="../assets/js/limits-core.js"></script>
+  <script src="../assets/js/series.js"></script>
+  <script src="../assets/js/analysis-core.js"></script>
+  <script src="../assets/js/analysis.js"></script>
+  <script src="../assets/js/tutor-config.js"></script>
+  <script src="../assets/js/tutor.js"></script>
+</body>
+</html>

@@ -1,0 +1,391 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Производная</title>
+  <meta name="description" content="Производная: откуда берётся определение, вывод таблицы и правил дифференцирования, лаборатория с графиками и тренажёр с пошаговыми решениями.">
+  <link rel="stylesheet" href="../vendor/katex/katex.min.css">
+  <link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+  <header class="site">
+    <div class="wrap">
+      <a class="logo" href="../index.html">Математика по шагам</a>
+      <nav><a href="../index.html">Все темы</a></nav>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <h1>Производная</h1>
+    <p class="lead">Математический анализ, 1 семестр. Разбираемся, откуда берётся определение, выводим таблицу и правила, доказываем основные теоремы, а потом дифференцируем что угодно — с решением по шагам.</p>
+    <p class="tracks">
+      <span class="track math">Математика — всё, включая §6</span>
+      <span class="track tech">Техника — §1–5, 7–9</span>
+      <span class="track econ">Экономика — §1, 2, 4, 5, 7, 9</span>
+    </p>
+
+    <ul class="toc">
+      <li><a href="#idea">Идея</a></li>
+      <li><a href="#definition">Определение</a></li>
+      <li><a href="#by-definition">Считаем по определению</a></li>
+      <li><a href="#table">Таблица</a></li>
+      <li><a href="#rules">Правила</a></li>
+      <li><a href="#theorems">Теоремы</a></li>
+      <li><a href="#applications">Приложения</a></li>
+      <li><a href="#lab">Лаборатория</a></li>
+      <li><a href="#practice">Тренажёр</a></li>
+    </ul>
+
+    <!-- 1. Идея -->
+    <h2 id="idea">1. Откуда берётся производная</h2>
+    <p>Возьмём функцию \(f\) и точку \(x_0\). Сдвинемся от неё на шаг \(h\). Функция изменится на \(f(x_0 + h) - f(x_0)\), и на каждую единицу шага в среднем придётся</p>
+    <p>\[ \frac{f(x_0 + h) - f(x_0)}{h}. \]</p>
+    <p>Это <b>средняя скорость изменения</b> функции на отрезке \([x_0;\ x_0 + h]\). Геометрически это угловой коэффициент (тангенс угла наклона) <b>секущей</b>: прямой через две точки графика. Уменьшайте \(h\) и смотрите, что происходит с секущей.</p>
+
+    <div class="card">
+      <div class="row" style="margin-bottom:10px">
+        <label>Функция:
+          <select id="sec-fn">
+            <option value="x^2">x²</option>
+            <option value="x^3 - 3x">x³ − 3x</option>
+            <option value="sin x">sin x</option>
+            <option value="e^x">eˣ</option>
+            <option value="ln x">ln x</option>
+          </select>
+        </label>
+        <label><input type="checkbox" id="sec-tangent"> показать касательную</label>
+      </div>
+      <canvas class="plot" id="sec-plot" aria-label="Секущая и касательная к графику"></canvas>
+      <div class="legend">
+        <span><i style="background:var(--curve)"></i>график \(f\)</span>
+        <span><i style="background:var(--curve-2)"></i>секущая</span>
+        <span style="color:var(--tangent)"><i class="dash"></i><span style="color:var(--muted)">касательная</span></span>
+      </div>
+      <div class="sliders">
+        <div class="slider"><label for="sec-x0">\(x_0\)</label><input type="range" id="sec-x0" min="-2" max="2" step="0.1" value="1"><output id="sec-x0-out">1</output></div>
+        <div class="slider"><label for="sec-h">\(h\)</label><input type="range" id="sec-h" min="0" max="100" step="1" value="0"><output id="sec-h-out">2</output></div>
+      </div>
+      <div class="readout" id="sec-readout" aria-live="polite"></div>
+    </div>
+
+    <p>Чем меньше \(h\), тем ближе секущая к одной предельной прямой — <b>касательной</b>. Её наклон и есть производная.</p>
+
+    <details class="why">
+      <summary>Почему нельзя просто подставить \(h = 0\)?</summary>
+      <p>Получится \(\frac{f(x_0) - f(x_0)}{0} = \frac{0}{0}\): такая запись не имеет смысла. Через одну точку проходит бесконечно много прямых, и непонятно, какую выбрать. Поэтому мы не подставляем \(h = 0\), а смотрим, к чему <b>стремится</b> отношение, когда \(h\) становится всё меньше. Это и есть предел.</p>
+    </details>
+    <details class="why">
+      <summary>Физический смысл: мгновенная скорость</summary>
+      <p>Пусть \(s(t)\) — путь, пройденный к моменту \(t\). Средняя скорость за время \(h\) равна \(\frac{s(t + h) - s(t)}{h}\). Спидометр показывает скорость «в момент времени», то есть предел этого отношения при \(h \to 0\). Это \(s'(t)\). Ускорение — производная скорости: \(a(t) = v'(t) = s''(t)\).</p>
+    </details>
+
+    <!-- 2. Определение -->
+    <h2 id="definition">2. Определение</h2>
+    <div class="card">
+      <p><b>Производной</b> функции \(f\) в точке \(x_0\) называется предел</p>
+      <p>\[ f'(x_0) = \lim_{h \to 0} \frac{f(x_0 + h) - f(x_0)}{h}, \]</p>
+      <p>если он существует и конечен. Тогда функцию называют <b>дифференцируемой</b> в точке \(x_0\).</p>
+    </div>
+    <p><b>Геометрический смысл:</b> \(f'(x_0)\) — угловой коэффициент касательной к графику в точке \((x_0;\ f(x_0))\). Уравнение касательной:</p>
+    <p>\[ y = f(x_0) + f'(x_0)\,(x - x_0). \]</p>
+    <details class="why">
+      <summary>Откуда уравнение касательной?</summary>
+      <p>Прямая с угловым коэффициентом \(k\), проходящая через точку \((x_0;\ y_0)\), записывается как \(y = y_0 + k(x - x_0)\). Проверка: при \(x = x_0\) получаем \(y = y_0\). Осталось подставить \(y_0 = f(x_0)\) и \(k = f'(x_0)\).</p>
+    </details>
+    <details class="why">
+      <summary>Всегда ли производная существует?</summary>
+      <p>Нет. Пример — \(f(x) = |x|\) в точке \(0\). При \(h &gt; 0\) отношение \(\frac{|h| - 0}{h} = 1\), а при \(h &lt; 0\) оно равно \(-1\). Пределы справа и слева разные, значит общего предела нет. На графике в нуле «излом», и касательную провести нельзя.</p>
+      <p>Зато верно обратное: если функция дифференцируема в точке, то она там непрерывна.</p>
+    </details>
+
+    <!-- 3. По определению -->
+    <h2 id="by-definition">3. Считаем по определению</h2>
+    <p>Найдём производную \(f(x) = x^2\) прямо по определению. Именно так получается каждая строка таблицы производных.</p>
+    <ol class="steps" data-reveal>
+      <li>
+        <div class="formula">\[ \frac{f(x + h) - f(x)}{h} = \frac{(x + h)^2 - x^2}{h} \]</div>
+        <div class="why-line">Записываем разностное отношение для \(f(x) = x^2\).</div>
+      </li>
+      <li>
+        <div class="formula">\[ = \frac{x^2 + 2xh + h^2 - x^2}{h} = \frac{2xh + h^2}{h} \]</div>
+        <div class="why-line">Раскрываем квадрат суммы, \(x^2\) сокращается.</div>
+      </li>
+      <li>
+        <div class="formula">\[ = 2x + h \]</div>
+        <div class="why-line">Делим на \(h\). Это законно: \(h \to 0\), но \(h \ne 0\), мы только приближаемся к нулю.</div>
+      </li>
+      <li>
+        <div class="formula">\[ (x^2)' = \lim_{h \to 0} (2x + h) = 2x \]</div>
+        <div class="why-line">Неопределённости \(\frac{0}{0}\) больше нет, \(h\) можно устремить к нулю. Готово!</div>
+      </li>
+    </ol>
+
+    <!-- 4. Таблица -->
+    <h2 id="table">4. Таблица производных — и откуда она</h2>
+    <p>Нажмите «Откуда?», чтобы увидеть вывод.</p>
+    <ul class="table-list">
+      <li>
+        \[ (C)' = 0, \qquad (x^n)' = n x^{n-1} \]
+        <details><summary>Откуда?</summary>
+          <p>Для константы разностное отношение равно \(\frac{C - C}{h} = 0\). Для \(x^n\) раскроем \((x + h)^n\) по биному Ньютона:</p>
+          <p>\[ \begin{aligned} \frac{(x + h)^n - x^n}{h} &= \frac{n x^{n-1} h + \binom{n}{2} x^{n-2} h^2 + \ldots}{h} \\ &= n x^{n-1} + h\,(\ldots) \to n x^{n-1}. \end{aligned} \]</p>
+          <p>Формула верна и для любых действительных \(n\), например \((\sqrt{x})' = (x^{1/2})' = \frac{1}{2} x^{-1/2} = \frac{1}{2\sqrt{x}}\) и \(\left(\frac{1}{x}\right)' = (x^{-1})' = -\frac{1}{x^2}\).</p>
+        </details>
+      </li>
+      <li>
+        \[ (\sin x)' = \cos x, \qquad (\cos x)' = -\sin x \]
+        <details><summary>Откуда?</summary>
+          <p>По формуле разности синусов \(\sin(x + h) - \sin x = 2 \sin\frac{h}{2} \cos\left(x + \frac{h}{2}\right)\). Тогда</p>
+          <p>\[ \frac{\sin(x + h) - \sin x}{h} = \frac{\sin\frac{h}{2}}{\frac{h}{2}} \cdot \cos\left(x + \frac{h}{2}\right) \to 1 \cdot \cos x. \]</p>
+          <p>Здесь использован <b>первый замечательный предел</b> \(\lim_{t \to 0} \frac{\sin t}{t} = 1\). Для косинуса: \(\cos x = \sin\left(\frac{\pi}{2} - x\right)\), по правилу сложной функции \((\cos x)' = \cos\left(\frac{\pi}{2} - x\right) \cdot (-1) = -\sin x\).</p>
+        </details>
+      </li>
+      <li>
+        \[ (e^x)' = e^x, \qquad (a^x)' = a^x \ln a \]
+        <details><summary>Откуда?</summary>
+          <p>\[ \frac{e^{x + h} - e^x}{h} = e^x \cdot \frac{e^h - 1}{h} \to e^x \cdot 1. \]</p>
+          <p>Предел \(\lim_{h \to 0} \frac{e^h - 1}{h} = 1\) — это и есть особое свойство числа \(e \approx 2{,}718\): из всех показательных функций только у \(e^x\) касательная в нуле имеет наклон ровно 1. Для другого основания \(a^x = e^{x \ln a}\), и по правилу сложной функции \((a^x)' = e^{x \ln a} \cdot \ln a = a^x \ln a\).</p>
+        </details>
+      </li>
+      <li>
+        \[ (\ln x)' = \frac{1}{x} \]
+        <details><summary>Откуда?</summary>
+          <p>Пусть \(y = \ln x\). Тогда \(x = e^y\). Продифференцируем обе части по \(x\), помня, что \(y\) зависит от \(x\): \(1 = e^y \cdot y'\). Отсюда \(y' = \frac{1}{e^y} = \frac{1}{x}\). Это частный случай правила для <b>обратной функции</b>.</p>
+        </details>
+      </li>
+      <li>
+        \[ (\operatorname{tg} x)' = \frac{1}{\cos^2 x}, \qquad (\operatorname{ctg} x)' = -\frac{1}{\sin^2 x} \]
+        <details><summary>Откуда?</summary>
+          <p>\(\operatorname{tg} x = \frac{\sin x}{\cos x}\), по правилу частного: \(\frac{\cos x \cdot \cos x - \sin x \cdot (-\sin x)}{\cos^2 x} = \frac{\cos^2 x + \sin^2 x}{\cos^2 x} = \frac{1}{\cos^2 x}\). Для котангенса так же.</p>
+        </details>
+      </li>
+      <li>
+        \[ (\arcsin x)' = \frac{1}{\sqrt{1 - x^2}}, \qquad (\arccos x)' = -\frac{1}{\sqrt{1 - x^2}} \]
+        <details><summary>Откуда?</summary>
+          <p>\(y = \arcsin x \;\Rightarrow\; x = \sin y\), где \(y \in \left[-\frac{\pi}{2};\ \frac{\pi}{2}\right]\). Дифференцируем: \(1 = \cos y \cdot y'\), значит \(y' = \frac{1}{\cos y}\). На этом отрезке \(\cos y \ge 0\), поэтому \(\cos y = \sqrt{1 - \sin^2 y} = \sqrt{1 - x^2}\). А \(\arccos x = \frac{\pi}{2} - \arcsin x\), отсюда минус.</p>
+        </details>
+      </li>
+      <li>
+        \[ (\operatorname{arctg} x)' = \frac{1}{1 + x^2}, \qquad (\operatorname{arcctg} x)' = -\frac{1}{1 + x^2} \]
+        <details><summary>Откуда?</summary>
+          <p>\(y = \operatorname{arctg} x \;\Rightarrow\; x = \operatorname{tg} y\). Дифференцируем: \(1 = \frac{y'}{\cos^2 y}\), значит \(y' = \cos^2 y = \frac{1}{1 + \operatorname{tg}^2 y} = \frac{1}{1 + x^2}\).</p>
+        </details>
+      </li>
+    </ul>
+
+    <!-- 5. Правила -->
+    <h2 id="rules">5. Правила дифференцирования</h2>
+    <div class="card">
+      <p>\[ (u \pm v)' = u' \pm v', \qquad (Cu)' = C u' \]</p>
+      <p>\[ (uv)' = u'v + uv', \qquad \left(\frac{u}{v}\right)' = \frac{u'v - uv'}{v^2} \]</p>
+      <p>\[ \big(f(g(x))\big)' = f'\big(g(x)\big) \cdot g'(x) \]</p>
+    </div>
+
+    <details class="why">
+      <summary>Откуда правило суммы и вынесение константы?</summary>
+      <p>Разностное отношение суммы равно сумме разностных отношений, а предел суммы равен сумме пределов. Константа выносится за знак предела точно так же.</p>
+    </details>
+
+    <details class="why">
+      <summary>Откуда правило произведения \((uv)' = u'v + uv'\)?</summary>
+      <ol class="steps">
+        <li>
+          <div class="formula">\[ \begin{aligned} &u(x{+}h)v(x{+}h) - u(x)v(x) \\ &= \big[u(x{+}h) - u(x)\big] v(x{+}h) \\ &\quad + u(x)\big[v(x{+}h) - v(x)\big] \end{aligned} \]</div>
+          <div class="why-line">Главный приём: прибавили и вычли \(u(x)\,v(x{+}h)\). Проверьте: если раскрыть скобки, лишнее сократится.</div>
+        </li>
+        <li>
+          <div class="formula">\[ \begin{aligned} \frac{\ldots}{h} = \;&\frac{u(x{+}h) - u(x)}{h} \cdot v(x{+}h) \\ &+ u(x) \cdot \frac{v(x{+}h) - v(x)}{h} \end{aligned} \]</div>
+          <div class="why-line">Делим на \(h\): получились два разностных отношения.</div>
+        </li>
+        <li>
+          <div class="formula">\[ \to u'(x)\,v(x) + u(x)\,v'(x) \]</div>
+          <div class="why-line">При \(h \to 0\) разностные отношения стремятся к производным, а \(v(x{+}h) \to v(x)\), потому что дифференцируемая функция непрерывна.</div>
+        </li>
+      </ol>
+    </details>
+
+    <details class="why">
+      <summary>Откуда правило частного?</summary>
+      <p>Запишем \(\frac{u}{v} = u \cdot v^{-1}\). По правилу сложной функции \((v^{-1})' = -v^{-2} \cdot v' = -\frac{v'}{v^2}\). По правилу произведения:</p>
+      <p>\[ \left(\frac{u}{v}\right)' = u' \cdot \frac{1}{v} + u \cdot \left(-\frac{v'}{v^2}\right) = \frac{u'v - uv'}{v^2}. \]</p>
+    </details>
+
+    <details class="why">
+      <summary>Откуда правило сложной функции (цепное правило)?</summary>
+      <p>Пусть \(y = f(u)\), а \(u = g(x)\). Когда \(x\) меняется на \(\Delta x\), \(u\) меняется на \(\Delta u\), а \(y\) — на \(\Delta y\). Тогда</p>
+      <p>\[ \frac{\Delta y}{\Delta x} = \frac{\Delta y}{\Delta u} \cdot \frac{\Delta u}{\Delta x} \;\to\; f'(u) \cdot g'(x). \]</p>
+      <p>Смысл простой: <b>скорости перемножаются</b>. Если \(u\) растёт втрое быстрее \(x\), а \(y\) вдвое быстрее \(u\), то \(y\) растёт в 6 раз быстрее \(x\).</p>
+      <p class="note">Самая частая ошибка — забыть множитель \(g'(x)\). Например, \((\sin 3x)' = 3\cos 3x\), а не \(\cos 3x\).</p>
+    </details>
+
+    <!-- 6. Теоремы -->
+    <h2 id="theorems">6. Теоремы о дифференцируемых функциях <span class="track math">Математика</span></h2>
+    <p>Эти теоремы связывают производную с поведением функции: почему в экстремуме касательная горизонтальна, почему из \(f' &gt; 0\) следует возрастание. Именно на них держится всё исследование функций.</p>
+
+    <details class="why">
+      <summary>Теорема Ферма: в точке экстремума \(f'(x_0) = 0\)</summary>
+      <p><b>Теорема.</b> Если \(x_0\) — внутренняя точка локального экстремума функции \(f\) и \(f\) дифференцируема в \(x_0\), то \(f'(x_0) = 0\).</p>
+      <p><b>Доказательство</b> (для максимума). Рядом с \(x_0\) выполнено \(f(x_0 + h) - f(x_0) \le 0\). При \(h &gt; 0\) разностное отношение \(\frac{f(x_0 + h) - f(x_0)}{h} \le 0\), поэтому предел справа \(\le 0\). При \(h &lt; 0\) знаменатель отрицателен, отношение \(\ge 0\), и предел слева \(\ge 0\). Оба односторонних предела равны \(f'(x_0)\), значит \(f'(x_0) = 0\). \(\blacksquare\)</p>
+      <p class="note">Обратное неверно: у \(x^3\) производная в нуле равна 0, но экстремума нет. Поэтому \(f'(x_0) = 0\) даёт лишь <b>кандидатов</b> в экстремумы.</p>
+    </details>
+
+    <details class="why">
+      <summary>Теорема Ролля</summary>
+      <p><b>Теорема.</b> Пусть \(f\) непрерывна на \([a;\ b]\), дифференцируема на \((a;\ b)\) и \(f(a) = f(b)\). Тогда существует \(c \in (a;\ b)\), в которой \(f'(c) = 0\).</p>
+      <p><b>Доказательство.</b> По теореме Вейерштрасса непрерывная на отрезке функция достигает наибольшего \(M\) и наименьшего \(m\) значений. Если \(M = m\), функция постоянна и \(f' \equiv 0\). Иначе хотя бы одно из них достигается не на концах (ведь \(f(a) = f(b)\)), то есть во внутренней точке \(c\). По теореме Ферма \(f'(c) = 0\). \(\blacksquare\)</p>
+      <p>Все условия нужны: у \(|x|\) на \([-1;\ 1]\) значения на концах равны, но в нуле производной нет — и точки с \(f' = 0\) тоже нет.</p>
+    </details>
+
+    <p><b>Теорема Лагранжа (о конечных приращениях).</b> Если \(f\) непрерывна на \([a;\ b]\) и дифференцируема на \((a;\ b)\), то найдётся \(c \in (a;\ b)\) такая, что</p>
+    <p>\[ f(b) - f(a) = f'(c)\,(b - a). \]</p>
+    <p><i>Геометрически:</i> найдётся точка, где касательная параллельна хорде. <i>Физически:</i> если средняя скорость за поездку 60 км/ч, то в какой-то момент спидометр показывал ровно 60.</p>
+    <ol class="steps" data-reveal>
+      <li>
+        <div class="formula">\[ k = \frac{f(b) - f(a)}{b - a} \]</div>
+        <div class="why-line">Обозначим наклон хорды. Нужно найти \(c\) с \(f'(c) = k\).</div>
+      </li>
+      <li>
+        <div class="formula">\[ g(x) = f(x) - k\,(x - a) \]</div>
+        <div class="why-line">Главная идея: «наклоним» график так, чтобы хорда стала горизонтальной. Вычитаем из \(f\) линейную функцию с наклоном хорды.</div>
+      </li>
+      <li>
+        <div class="formula">\[ g(a) = f(a), \qquad g(b) = f(b) - \big(f(b) - f(a)\big) = f(a) \]</div>
+        <div class="why-line">Значения на концах совпали, а непрерывность и дифференцируемость \(g\) наследует от \(f\). Все условия теоремы Ролля выполнены.</div>
+      </li>
+      <li>
+        <div class="formula">\[ \begin{gathered} \exists c \in (a;\ b): \; g'(c) = f'(c) - k = 0 \\ \Rightarrow\; f'(c) = \frac{f(b) - f(a)}{b - a} \qquad \blacksquare \end{gathered} \]</div>
+        <div class="why-line">Применяем теорему Ролля к \(g\).</div>
+      </li>
+    </ol>
+
+    <details class="why">
+      <summary>Следствия: почему из \(f' &gt; 0\) следует возрастание</summary>
+      <p>Возьмём любые \(x_1 &lt; x_2\) из промежутка. По Лагранжу \(f(x_2) - f(x_1) = f'(c)(x_2 - x_1)\).</p>
+      <ul>
+        <li>Если \(f' &gt; 0\) на промежутке, то правая часть положительна: \(f(x_2) &gt; f(x_1)\), функция возрастает.</li>
+        <li>Если \(f' \equiv 0\), то \(f(x_2) = f(x_1)\): функция постоянна. Отсюда, например, следует, что две первообразные отличаются на константу.</li>
+      </ul>
+      <p class="note">Важно, что это <b>промежуток</b>. У \(f(x) = -\frac{1}{x}\) производная \(\frac{1}{x^2} &gt; 0\) всюду, где она определена, но \(f(-1) = 1 &gt; f(1) = -1\): область определения — не промежуток.</p>
+    </details>
+
+    <details class="why">
+      <summary>Теорема Коши и правило Лопиталя</summary>
+      <p><b>Теорема Коши</b> обобщает Лагранжа: при \(g' \ne 0\) найдётся \(c\), для которой \(\frac{f(b) - f(a)}{g(b) - g(a)} = \frac{f'(c)}{g'(c)}\). Доказательство то же: применить Ролля к \(f(x) - \lambda g(x)\) с подходящим \(\lambda\).</p>
+      <p>Из неё выводится <b>правило Лопиталя</b>: если \(f(x_0) = g(x_0) = 0\) и существует \(\lim \frac{f'}{g'}\), то \(\lim_{x \to x_0} \frac{f(x)}{g(x)} = \lim_{x \to x_0} \frac{f'(x)}{g'(x)}\). Например, \(\lim_{x \to 0} \frac{x - \sin x}{x^3} = \lim \frac{1 - \cos x}{3x^2} = \lim \frac{\sin x}{6x} = \frac{1}{6}\).</p>
+      <p class="note">Условие «предел \(\frac{f'}{g'}\) существует» обязательно. Для \(\frac{x + \sin x}{x}\) при \(x \to \infty\) предел равен 1, а \(\frac{1 + \cos x}{1}\) предела не имеет — правило просто неприменимо.</p>
+    </details>
+
+    <!-- 7. Приложения -->
+    <h2 id="applications">7. Приложения</h2>
+    <div class="card">
+      <h3 style="margin-top:0"><span class="track tech">Техника</span> Линейное приближение и погрешности</h3>
+      <p>Рядом с точкой график почти совпадает с касательной: \(f(x_0 + \Delta x) \approx f(x_0) + f'(x_0)\,\Delta x\). Пример: \(\sqrt{4{,}1} \approx 2 + \frac{1}{2\sqrt{4}} \cdot 0{,}1 = 2{,}025\) (точно: \(2{,}02485\ldots\)).</p>
+      <p>Так же оценивают погрешность косвенных измерений: \(\Delta f \approx |f'(x)|\,\Delta x\). Радиус измерен как \(r = 10 \pm 0{,}1\) см, площадь круга \(S = \pi r^2\). Тогда \(\Delta S \approx 2\pi r \,\Delta r \approx 6{,}3\) см², то есть относительная погрешность 2% — вдвое больше, чем у радиуса.</p>
+      <h3><span class="track tech">Техника</span> Метод Ньютона</h3>
+      <p>Чтобы решить \(f(x) = 0\), заменяем график касательной и находим, где она пересекает ось: \(x_{n+1} = x_n - \frac{f(x_n)}{f'(x_n)}\). Для \(f(x) = x^2 - 2\) от \(x_0 = 1\): \(1 \to 1{,}5 \to 1{,}41667 \to 1{,}414216\) — уже 6 верных знаков \(\sqrt{2}\) за три шага. Так считают корни в калькуляторах и инженерных программах.</p>
+      <p class="small-note" style="margin-bottom:0">Линейное приближение — первый шаг; следующие шаги (квадратичное, кубическое…) — это <a href="taylor.html">формула Тейлора</a>.</p>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0"><span class="track econ">Экономика</span> Предельные величины</h3>
+      <p><b>Предельные издержки</b> \(MC(q) = C'(q)\) — примерная стоимость производства ещё одной единицы. Пусть \(C(q) = 100 + 5q + 0{,}01q^2\). Тогда \(MC(100) = 5 + 0{,}02 \cdot 100 = 7\), а точная разность \(C(101) - C(100) = 7{,}01\).</p>
+      <p><b>Эластичность спроса</b> \(E = \frac{dQ}{dP} \cdot \frac{P}{Q}\) показывает, на сколько процентов изменится спрос при росте цены на 1%. Для \(Q = 100 - 2P\) при \(P = 20\): \(Q = 60\), \(E = -2 \cdot \frac{20}{60} \approx -0{,}67\). Так как \(|E| &lt; 1\), спрос неэластичен: повышение цены увеличит выручку.</p>
+    </div>
+
+    <!-- 8. Лаборатория -->
+    <h2 id="lab">8. Лаборатория: продифференцируйте любую функцию</h2>
+    <p>Введите функцию — получите производную с решением по шагам, графики \(f\) и \(f'\) и касательную в выбранной точке. Посмотрите, как знак \(f'\) связан с ростом и убыванием \(f\).</p>
+    <div class="card">
+      <div class="expr-input">
+        <label for="lab-input" style="font-weight:600">\(f(x) =\)</label>
+        <input id="lab-input" value="x^3 - 3x" spellcheck="false" autocomplete="off" autocapitalize="off" aria-label="Функция f(x)">
+      </div>
+      <div class="chips" id="lab-chips">
+        <button type="button">x^3 - 3x</button>
+        <button type="button">x^2 sin x</button>
+        <button type="button">e^(-x^2)</button>
+        <button type="button">ln(x^2 + 1)</button>
+        <button type="button">sin x / x</button>
+        <button type="button">x^x</button>
+        <button type="button">arctg(2x)</button>
+        <button type="button">tg x</button>
+      </div>
+      <div class="preview" id="lab-preview" aria-live="polite"></div>
+
+      <canvas class="plot" id="lab-plot" style="margin-top:12px" aria-label="Графики функции и её производной"></canvas>
+      <div class="legend">
+        <span><i style="background:var(--curve)"></i>\(f(x)\)</span>
+        <span><i style="background:var(--curve-2)"></i>\(f'(x)\)</span>
+        <span style="color:var(--tangent)"><i class="dash"></i><span style="color:var(--muted)">касательная</span></span>
+      </div>
+      <div class="sliders">
+        <div class="slider"><label for="lab-x0">\(x_0\)</label><input type="range" id="lab-x0" min="-5" max="5" step="0.05" value="1.5"><output id="lab-x0-out">1.5</output></div>
+      </div>
+      <div class="row" style="margin-top:8px">
+        <button type="button" id="lab-zoom-in">Приблизить</button>
+        <button type="button" id="lab-zoom-out">Отдалить</button>
+        <button type="button" id="lab-steps-btn" class="primary">Решение по шагам</button>
+      </div>
+      <div class="readout" id="lab-readout" aria-live="polite"></div>
+      <div id="lab-steps"></div>
+    </div>
+
+    <details class="why">
+      <summary>Как вводить формулы</summary>
+      <p>Степень — <code>x^3</code>, корень — <code>sqrt(x)</code>, экспонента — <code>e^x</code> или <code>exp(x)</code>, логарифм — <code>ln x</code>. Функции: <code>sin cos tg ctg arcsin arccos arctg arcctg</code>. Знак умножения можно не писать: <code>2x sin x</code>. Если аргумент длиннее одного множителя, ставьте скобки: <code>sin(2x + 1)</code>, <code>e^(x^2)</code>. Квадрат функции: <code>sin^2 x</code>. Русскую «х» тоже можно.</p>
+    </details>
+
+    <!-- 9. Тренажёр -->
+    <h2 id="practice">9. Тренажёр</h2>
+    <div class="card">
+      <div class="row" style="justify-content:space-between">
+        <label>Уровень:
+          <select id="level">
+            <option value="1">1 — таблица и линейность</option>
+            <option value="2">2 — произведение и частное</option>
+            <option value="3">3 — сложная функция</option>
+            <option value="4">4 — комбинированные</option>
+          </select>
+        </label>
+        <div class="stats" id="stats"></div>
+      </div>
+
+      <div class="task-eq" id="task-eq"></div>
+
+      <form id="answer-form" autocomplete="off">
+        <div class="expr-input">
+          <label for="answer" style="font-weight:600">\(f'(x) =\)</label>
+          <input id="answer" spellcheck="false" autocapitalize="off" placeholder="например: 2x cos(3x) - sin x" aria-label="Ваш ответ">
+        </div>
+        <div class="preview" id="answer-preview" aria-live="polite"></div>
+        <div class="row" style="margin-top:8px">
+          <button class="primary" type="submit">Проверить</button>
+          <button type="button" id="hint-btn">Подсказка</button>
+          <button type="button" id="solution-btn">Показать решение</button>
+          <button type="button" id="to-lab-btn">В лабораторию</button>
+          <button type="button" id="new-task-btn">Новая задача</button>
+        </div>
+      </form>
+      <p class="small-note">Ответ можно записать в любой равносильной форме: проверка сравнивает значения, а не запись.</p>
+
+      <div class="feedback" id="feedback" aria-live="polite"></div>
+      <div class="solution" id="solution"></div>
+    </div>
+  </main>
+
+  <footer class="site">
+    <div class="wrap">Прогресс в тренажёре хранится только в вашем браузере.</div>
+  </footer>
+
+  <script src="../vendor/katex/katex.min.js"></script>
+  <script src="../vendor/katex/contrib/auto-render.min.js"></script>
+  <script src="../assets/js/math-render.js"></script>
+  <script src="../assets/js/steps.js"></script>
+  <script src="../assets/js/plot.js"></script>
+  <script src="../assets/js/expr.js"></script>
+  <script src="../assets/js/derivative-core.js"></script>
+  <script src="../assets/js/derivative.js"></script>
+  <script src="../assets/js/tutor-config.js"></script>
+  <script src="../assets/js/tutor.js"></script>
+</body>
+</html>
