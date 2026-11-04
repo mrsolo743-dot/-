@@ -102,6 +102,7 @@ export default {
 
     const allowed = String(env.ALLOWED_ORIGIN || '').split(',').map((s) => s.trim()).filter(Boolean);
     if (allowed.length && !allowed.includes(origin)) return json({ error: 'Запросы принимаются только с сайта «Математика по шагам».' }, 403, cors);
+    if (!env.AI && env.IA) env = { ...env, AI: env.IA }; // привязку модели могли назвать «IA» вместо «AI»
     if (!env.GEMINI_API_KEY && !env.AI) return json({ error: 'Помощник не настроен: на сервере нет ни ключа GEMINI_API_KEY, ни привязки Workers AI.' }, 500, cors);
 
     const ip = request.headers.get('CF-Connecting-IP') || 'unknown';

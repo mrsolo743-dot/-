@@ -84,3 +84,10 @@ test('без ключа Gemini — бесплатная модель Cloudflare 
   const r2 = await worker.default.fetch(req({ messages: [{ role: 'user', text: 'q' }] }), { ALLOWED_ORIGIN: 'https://site.test', AI: AI2 });
   assert.equal(r2.status, 429);
 });
+
+test('привязка модели под именем IA тоже работает', async () => {
+  const IA = { run: async () => ({ response: 'ok IA' }) };
+  const res = await worker.default.fetch(req({ messages: [{ role: 'user', text: 'q' }] }), { ALLOWED_ORIGIN: 'https://site.test', IA });
+  assert.equal(res.status, 200);
+  assert.equal((await res.json()).text, 'ok IA');
+});
