@@ -1,0 +1,30 @@
+# Автоматическая установка серверной части ИИ-помощника в Cloudflare (с моделью Workers AI).
+# Нужны секреты репозитория (Settings → Secrets and variables → Actions):
+#   CLOUDFLARE_API_TOKEN  — токен Cloudflare (шаблон «Edit Cloudflare Workers» + право Workers AI: Edit)
+#   CLOUDFLARE_ACCOUNT_ID — идентификатор аккаунта Cloudflare
+# Запуск: вкладка Actions → «ИИ-помощник: установка» → Run workflow.
+name: "ИИ-помощник: установка"
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['worker/**']
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Проверка кода помощника
+        run: node --test tests/tutor.test.js
+      - name: Установка в Cloudflare
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: worker
+          command: deploy
