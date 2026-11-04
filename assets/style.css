@@ -66,6 +66,8 @@
 }
 
 * { box-sizing: border-box; }
+/* Атрибут hidden всегда скрывает элемент, даже если у него задан display: flex или grid */
+[hidden] { display: none !important; }
 
 body {
   margin: 0;

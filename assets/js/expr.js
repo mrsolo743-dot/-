@@ -24,7 +24,7 @@
   const neg = (a) => ({ type: 'neg', a });
   const fn = (name, arg) => ({ type: 'fn', name, arg });
 
-  const FUNCS = ['sin', 'cos', 'tg', 'ctg', 'ln', 'exp', 'sqrt', 'arcsin', 'arccos', 'arctg', 'arcctg'];
+  const FUNCS = ['sin', 'cos', 'tg', 'ctg', 'ln', 'exp', 'sqrt', 'arcsin', 'arccos', 'arctg', 'arcctg', 'abs'];
   const ALIASES = { tan: 'tg', cot: 'ctg', arctan: 'arctg', arccot: 'arcctg', log: 'ln' };
   const CONSTS = { e: Math.E, pi: Math.PI };
 
@@ -40,6 +40,7 @@
     arccos: Math.acos,
     arctg: Math.atan,
     arcctg: (v) => Math.PI / 2 - Math.atan(v),
+    abs: Math.abs,
   };
 
   // ---------- Разбор строки ----------
@@ -75,7 +76,8 @@
       .replace(/²/g, '^2')
       .replace(/³/g, '^3')
       .replace(/[[{]/g, '(')
-      .replace(/[\]}]/g, ')');
+      .replace(/[\]}]/g, ')')
+      .replace(/\|([^|]+)\|/g, 'abs($1)'); // модуль |u| (без вложенных)
     const tokens = [];
     let i = 0;
     while (i < s.length) {
@@ -448,7 +450,7 @@
     arcsin: '\\arcsin', arccos: '\\arccos', arctg: '\\operatorname{arctg}', arcctg: '\\operatorname{arcctg}',
   };
   const wrap = (s, cond) => (cond ? '\\left(' + s + '\\right)' : s);
-  const isAtom = (n) => n.type === 'var' || n.type === 'const' || (n.type === 'num' && n.value >= 0);
+  const isAtom = (n) => n.type === 'var' || n.type === 'const' || (n.type === 'num' && n.value >= 0) || (n.type === 'fn' && n.name === 'abs');
   const isSum = (n) => n.type === 'op' && (n.op === '+' || n.op === '-');
 
   function prec(n) {
@@ -471,6 +473,7 @@
 
   function fnTex(n, sup) {
     if (n.name === 'sqrt') return '\\sqrt{' + tex(n.arg) + '}';
+    if (n.name === 'abs') return '\\left|' + tex(n.arg) + '\\right|' + (sup ? '^{' + sup + '}' : '');
     if (n.name === 'exp') return 'e^{' + tex(n.arg) + '}';
     const name = FN_TEX[n.name] + (sup ? '^{' + sup + '}' : '');
     return isAtom(n.arg) ? name + ' ' + tex(n.arg) : name + '\\left(' + tex(n.arg) + '\\right)';
@@ -523,6 +526,7 @@
     arccos: (u) => neg(op('/', num(1), fn('sqrt', op('-', num(1), op('^', u, num(2)))))),
     arctg: (u) => op('/', num(1), op('+', num(1), op('^', u, num(2)))),
     arcctg: (u) => neg(op('/', num(1), op('+', num(1), op('^', u, num(2))))),
+    abs: (u) => op('/', u, fn('abs', u)), // (|u|)' = u/|u| · u' (при u ≠ 0)
   };
   const TABLE_TEX = {
     sin: "(\\sin x)' = \\cos x",
@@ -536,6 +540,7 @@
     arccos: "(\\arccos x)' = -\\frac{1}{\\sqrt{1 - x^2}}",
     arctg: "(\\operatorname{arctg} x)' = \\frac{1}{1 + x^2}",
     arcctg: "(\\operatorname{arcctg} x)' = -\\frac{1}{1 + x^2}",
+    abs: "(|x|)' = \\frac{x}{|x|} \\;(x \\ne 0)",
   };
 
   const P = (n) => '\\left(' + tex(n) + "\\right)'";
