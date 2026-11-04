@@ -337,3 +337,15 @@ table.signs .pt { background: var(--surface-2); }
 /* Контейнеры с прокруткой должны быть «точкой отсчёта» для абсолютно позиционированных
    элементов внутри (скрытый MathML у KaTeX), иначе те выпадают наружу и расширяют страницу */
 .tt-wrap, .katex-display, .formula, dl.facts dd, button.choice, .preview { position: relative; }
+
+/* Ввод матрицы таблицей */
+table.mgrid { border-collapse: separate; border-spacing: 4px; margin: 8px 0; border-left: 2px solid var(--text); border-right: 2px solid var(--text); border-radius: 6px; padding: 2px 4px; }
+table.mgrid input {
+  width: 3.6em; text-align: center; font: inherit; font-size: 16px; font-variant-numeric: tabular-nums;
+  padding: 6px 4px; border-radius: 8px; border: 1px solid var(--border); background: var(--bg); color: var(--text);
+}
+table.mgrid td.bar { border-left: 2px dashed var(--muted); padding-left: 6px; }
+.steps-list.gauss .ops { color: var(--accent); margin: 4px 0; }
+.vars { display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: center; margin: 8px 0 12px; }
+.vars label { display: inline-flex; gap: 6px; align-items: center; }
+.vars input { width: 5em; text-align: center; font: inherit; font-size: 16px; padding: 6px 4px; border-radius: 8px; border: 1px solid var(--border); background: var(--bg); color: var(--text); }
