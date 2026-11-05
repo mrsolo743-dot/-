@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Матрицы и определители</title>
+  <meta name="description" content="Матрицы и определители: почему умножение «строка на столбец», определитель как площадь, свойства, обратная матрица методом Гаусса — Жордана. Лаборатория и тренажёр с точными дробями.">
+  <link rel="stylesheet" href="../vendor/katex/katex.min.css">
+  <link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+  <header class="site">
+    <div class="wrap">
+      <a class="logo" href="../index.html">Математика по шагам</a>
+      <nav><a href="../index.html">Все темы</a></nav>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <h1>Матрицы и определители</h1>
+    <p class="lead">Линейная алгебра, 1 семестр. Откуда берутся странные правила умножения матриц, что на самом деле измеряет определитель и как найти обратную матрицу.</p>
+    <p class="tracks">
+      <span class="track math">Математика — всё, включая доказательства</span>
+      <span class="track tech">Техника — §1–6</span>
+      <span class="track econ">Экономика — §1, 3, 4–6</span>
+    </p>
+
+    <ul class="toc">
+      <li><a href="#ops">Действия</a></li>
+      <li><a href="#area">Определитель как площадь</a></li>
+      <li><a href="#det">Определитель n×n</a></li>
+      <li><a href="#inverse">Обратная матрица</a></li>
+      <li><a href="#lab">Лаборатория</a></li>
+      <li><a href="#applications">Приложения</a></li>
+      <li><a href="#practice">Тренажёр</a></li>
+    </ul>
+
+    <!-- 1. Действия -->
+    <h2 id="ops">1. Матрицы и действия с ними</h2>
+    <p>Матрица \(m \times n\) — таблица чисел из \(m\) строк и \(n\) столбцов. Складывают и умножают на число поэлементно. А произведение устроено так: элемент \(c_{ij}\) — это «строка \(i\) первой матрицы на столбец \(j\) второй»:</p>
+    <div class="card"><p style="margin:0">\[ (AB)_{ij} = \sum_{k} a_{ik} b_{kj} = a_{i1}b_{1j} + a_{i2}b_{2j} + \ldots \]</p></div>
+    <details class="why">
+      <summary>Почему умножение такое странное? (матрица — это замена переменных)</summary>
+      <p>Матрица \(B\) задаёт замену: \(\begin{cases} y_1 = b_{11}x_1 + b_{12}x_2 \\ y_2 = b_{21}x_1 + b_{22}x_2 \end{cases}\), коротко \(y = Bx\). Сделаем вторую замену \(z = Ay\). Подставим одно в другое:</p>
+      <p>\[ z_1 = a_{11}y_1 + a_{12}y_2 = (a_{11}b_{11} + a_{12}b_{21})\,x_1 + (a_{11}b_{12} + a_{12}b_{22})\,x_2. \]</p>
+      <p>Коэффициенты получились ровно «строка на столбец». Итак, \(AB\) — это матрица <b>последовательного выполнения</b> двух замен: сначала \(B\), потом \(A\). Из этого сразу видно, почему произведение ассоциативно, но не коммутативно: порядок действий важен.</p>
+    </details>
+    <details class="why">
+      <summary>\(AB \ne BA\): пример и другие ловушки</summary>
+      <p>\(\begin{pmatrix} 0 &amp; 1 \\ 0 &amp; 0 \end{pmatrix}\begin{pmatrix} 0 &amp; 0 \\ 1 &amp; 0 \end{pmatrix} = \begin{pmatrix} 1 &amp; 0 \\ 0 &amp; 0 \end{pmatrix}\), а в другом порядке получается \(\begin{pmatrix} 0 &amp; 0 \\ 0 &amp; 1 \end{pmatrix}\). Кроме того, произведение ненулевых матриц может быть нулевым: \(\begin{pmatrix} 0 &amp; 1 \\ 0 &amp; 0 \end{pmatrix}^2 = 0\). Поэтому из \(AB = AC\) нельзя «сократить» \(A\), если у неё нет обратной.</p>
+      <p>Транспонирование меняет порядок: \((AB)^T = B^T A^T\).</p>
+    </details>
+
+    <!-- 2. Площадь -->
+    <h2 id="area">2. Определитель 2×2 — это площадь</h2>
+    <p>Столбцы матрицы — два вектора на плоскости. Определитель \(\begin{vmatrix} a &amp; b \\ c &amp; d \end{vmatrix} = ad - bc\) равен <b>ориентированной площади</b> параллелограмма, натянутого на них: по модулю — площадь, знак говорит, в каком порядке идут векторы (против или по часовой стрелке).</p>
+    <div class="card">
+      <canvas class="plot" id="area-plot" aria-label="Параллелограмм, натянутый на столбцы матрицы"></canvas>
+      <div class="sliders">
+        <div class="slider"><label for="a11">\(a\)</label><input type="range" id="a11" min="-4" max="4" step="0.5" value="3"><output id="a11-out"></output></div>
+        <div class="slider"><label for="a21">\(c\)</label><input type="range" id="a21" min="-4" max="4" step="0.5" value="1"><output id="a21-out"></output></div>
+        <div class="slider"><label for="a12">\(b\)</label><input type="range" id="a12" min="-4" max="4" step="0.5" value="1"><output id="a12-out"></output></div>
+        <div class="slider"><label for="a22">\(d\)</label><input type="range" id="a22" min="-4" max="4" step="0.5" value="2"><output id="a22-out"></output></div>
+      </div>
+      <div class="readout" id="area-out" aria-live="polite"></div>
+    </div>
+    <details class="why">
+      <summary>Почему именно \(ad - bc\)?</summary>
+      <p>Возьмём векторы \((a;\ c)\) и \((b;\ d)\) с положительными координатами, причём первый «ниже» второго. Параллелограмм вписан в прямоугольник со сторонами \(a + b\) и \(c + d\). Лишнее — два треугольника площади \(\frac{ac}{2}\), два треугольника площади \(\frac{bd}{2}\) и два прямоугольника \(b \times c\). Получается \((a + b)(c + d) - ac - bd - 2bc = ad - bc\). Раскройте скобки и проверьте.</p>
+      <p>Отсюда главный смысл: \(\det A\) — во сколько раз (и с каким знаком) замена \(y = Ax\) растягивает площади. Если \(\det A = 0\), плоскость «сплющивается» в прямую, и замену нельзя обратить.</p>
+    </details>
+
+    <!-- 3. n×n -->
+    <h2 id="det">3. Определитель n×n и его свойства</h2>
+    <div class="card">
+      <p style="margin-top:0"><b>3×3 (правило Саррюса):</b></p>
+      <p>\[ \begin{vmatrix} a_{11} &amp; a_{12} &amp; a_{13} \\ a_{21} &amp; a_{22} &amp; a_{23} \\ a_{31} &amp; a_{32} &amp; a_{33} \end{vmatrix} = \begin{aligned} &amp;a_{11}a_{22}a_{33} + a_{12}a_{23}a_{31} + a_{13}a_{21}a_{32} \\ &amp;- a_{13}a_{22}a_{31} - a_{11}a_{23}a_{32} - a_{12}a_{21}a_{33}. \end{aligned} \]</p>
+      <p style="margin-bottom:0"><b>Разложение по строке:</b> \(\det A = \sum_j (-1)^{i+j} a_{ij} M_{ij}\), где \(M_{ij}\) — определитель, получающийся вычёркиванием строки \(i\) и столбца \(j\). Геометрически для 3×3 это объём параллелепипеда.</p>
+    </div>
+    <p><b>Свойства</b> — на них основан самый быстрый способ счёта (метод Гаусса):</p>
+    <ul>
+      <li>перестановка двух строк меняет знак определителя;</li>
+      <li>общий множитель строки выносится за знак определителя;</li>
+      <li>прибавление к строке другой строки, умноженной на число, определитель <b>не меняет</b>;</li>
+      <li>определитель треугольной матрицы — произведение диагональных элементов;</li>
+      <li>\(\det(AB) = \det A \cdot \det B\), \(\det A^T = \det A\).</li>
+    </ul>
+    <details class="why">
+      <summary>Почему прибавление строки не меняет определитель</summary>
+      <p>Определитель линеен по каждой строке: \(\det(\ldots, r_i + k r_j, \ldots) = \det(\ldots, r_i, \ldots) + k \det(\ldots, r_j, \ldots, r_j, \ldots)\). Во втором слагаемом две одинаковые строки, а такой определитель равен нулю (переставив их, получим тот же определитель с другим знаком: \(D = -D\)). Геометрически: сдвиг параллелограмма вдоль стороны не меняет его площадь.</p>
+    </details>
+    <p class="small-note">Поэтому определитель считают так: приводят матрицу к треугольному виду, следя за перестановками строк, и перемножают диагональ. Для 10×10 это около 300 умножений, а по формуле с перестановками — 36 миллионов слагаемых.</p>
+
+    <!-- 4. Обратная -->
+    <h2 id="inverse">4. Обратная матрица</h2>
+    <p>\(A^{-1}\) — такая матрица, что \(A A^{-1} = A^{-1} A = E\). Она существует тогда и только тогда, когда \(\det A \ne 0\) (замену нельзя обратить, если она «сплющивает» пространство). Для 2×2:</p>
+    <div class="card"><p style="margin:0">\[ \begin{pmatrix} a &amp; b \\ c &amp; d \end{pmatrix}^{-1} = \frac{1}{ad - bc} \begin{pmatrix} d &amp; -b \\ -c &amp; a \end{pmatrix}. \]</p></div>
+    <p><b>Метод Гаусса — Жордана</b> для любого размера: записываем \((A \mid E)\) и элементарными преобразованиями строк приводим левую часть к \(E\). Справа получится \(A^{-1}\).</p>
+    <details class="why">
+      <summary>Почему метод Гаусса — Жордана работает</summary>
+      <p>Каждое элементарное преобразование строк — это умножение слева на некоторую обратимую матрицу \(P_k\). Если \(P_m \cdots P_1 A = E\), то произведение \(P = P_m \cdots P_1\) и есть \(A^{-1}\). Те же преобразования, применённые к \(E\) справа от черты, дают \(P E = P = A^{-1}\).</p>
+    </details>
+
+    <!-- 5. Лаборатория -->
+    <h2 id="lab">5. Лаборатория</h2>
+    <p>Введите матрицу (целые числа, дроби вида 3/4 или десятичные) — получите определитель или обратную матрицу с каждым шагом.</p>
+    <div class="card">
+      <div class="row">
+        <label>Размер:
+          <select id="lab-n"><option value="2">2 × 2</option><option value="3" selected>3 × 3</option><option value="4">4 × 4</option></select>
+        </label>
+        <button type="button" id="lab-random">Случайная матрица</button>
+      </div>
+      <div id="lab-grid"></div>
+      <div class="row">
+        <button type="button" class="primary" id="lab-det">Определитель</button>
+        <button type="button" class="primary" id="lab-inv">Обратная матрица</button>
+        <button type="button" id="lab-rank">Ранг</button>
+      </div>
+      <div id="lab-out" aria-live="polite"></div>
+    </div>
+
+    <!-- 6. Приложения -->
+    <h2 id="applications">6. Приложения</h2>
+    <div class="card">
+      <p style="margin-top:0"><span class="track tech">Техника</span> <b>Повороты.</b> Поворот плоскости на угол \(\varphi\) — матрица \(R_\varphi = \begin{pmatrix} \cos\varphi &amp; -\sin\varphi \\ \sin\varphi &amp; \cos\varphi \end{pmatrix}\), \(\det R_\varphi = 1\) (площади не меняются). Два поворота подряд — произведение: \(R_\alpha R_\beta = R_{\alpha + \beta}\). Перемножив, вы получите формулы косинуса и синуса суммы. Так работают повороты в компьютерной графике и робототехнике.</p>
+      <p style="margin-bottom:0"><span class="track econ">Экономика</span> <b>Модель Леонтьева «затраты — выпуск».</b> Отрасли тратят продукцию друг друга: \(x = Ax + y\), где \(x\) — выпуск, \(y\) — конечный спрос, \(A\) — матрица затрат на единицу продукции. Отсюда \(x = (E - A)^{-1} y\). Для \(A = \begin{pmatrix} 0{,}2 &amp; 0{,}3 \\ 0{,}4 &amp; 0{,}1 \end{pmatrix}\) и \(y = (60;\ 120)\): \(\det(E - A) = 0{,}6\), и \(x = (150;\ 200)\) — столько нужно произвести, чтобы покрыть и внутренние нужды, и спрос.</p>
+    </div>
+
+    <!-- 7. Тренажёр -->
+    <h2 id="practice">7. Тренажёр</h2>
+    <div class="card">
+      <div class="row" style="justify-content:space-between">
+        <label>Режим:
+          <select id="mode">
+            <option value="det2">Определитель 2 × 2</option>
+            <option value="det3">Определитель 3 × 3</option>
+            <option value="prod">Произведение матриц</option>
+            <option value="inv">Обратная матрица 2 × 2</option>
+            <option value="rank">Ранг матрицы</option>
+            <option value="tf">Верно или неверно?</option>
+          </select>
+        </label>
+        <div class="stats" id="stats"></div>
+      </div>
+      <div class="task-eq" id="task"></div>
+      <div id="area"></div>
+      <div class="feedback" id="feedback" aria-live="polite"></div>
+      <div class="solution" id="solution"></div>
+      <div class="row" style="margin-top:12px">
+        <button type="button" id="solution-btn">Показать решение</button>
+        <button type="button" class="primary" id="new-task-btn">Новая задача</button>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site">
+    <div class="wrap">Прогресс в тренажёре хранится только в вашем браузере.</div>
+  </footer>
+
+  <script src="../vendor/katex/katex.min.js"></script>
+  <script src="../vendor/katex/contrib/auto-render.min.js"></script>
+  <script src="../assets/js/math-render.js"></script>
+  <script src="../assets/js/plot.js"></script>
+  <script src="../assets/js/lin-core.js"></script>
+  <script src="../assets/js/lin-ui.js"></script>
+  <script src="../assets/js/matrices.js"></script>
+</body>
+</html>

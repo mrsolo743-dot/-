@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Интеграл</title>
+  <meta name="description" content="Интеграл: суммы Римана интерактивно, определение и интегрируемость, первообразная, формула Ньютона — Лейбница с доказательством, замена и по частям, несобственные интегралы, приложения и тренажёр.">
+  <link rel="stylesheet" href="../vendor/katex/katex.min.css">
+  <link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+  <header class="site">
+    <div class="wrap">
+      <a class="logo" href="../index.html">Математика по шагам</a>
+      <nav><a href="../index.html">Все темы</a></nav>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <h1>Интеграл</h1>
+    <p class="lead">Математический анализ, 1–2 семестр. Интеграл — это площадь, собранная из тонких полосок. Разбираемся, почему это то же самое, что «обратная производная», и учимся интегрировать.</p>
+    <p class="tracks">
+      <span class="track math">Математика — всё, включая доказательства</span>
+      <span class="track tech">Техника — §1, 3–7</span>
+      <span class="track econ">Экономика — §1, 3–5, 7</span>
+    </p>
+
+    <ul class="toc">
+      <li><a href="#riemann">Суммы Римана</a></li>
+      <li><a href="#definition">Определение</a></li>
+      <li><a href="#antiderivative">Первообразная</a></li>
+      <li><a href="#newton">Ньютон — Лейбниц</a></li>
+      <li><a href="#methods">Методы</a></li>
+      <li><a href="#improper">Несобственные</a></li>
+      <li><a href="#applications">Приложения</a></li>
+      <li><a href="#practice">Тренажёр</a></li>
+    </ul>
+
+    <!-- 1. Суммы Римана -->
+    <h2 id="riemann">1. Площадь из полосок: суммы Римана</h2>
+    <p>Разобьём отрезок \([a;\ b]\) на \(n\) частей ширины \(\Delta x = \frac{b - a}{n}\) и заменим площадь под графиком суммой площадей прямоугольников. Чем больше \(n\), тем точнее. Предел этих сумм и есть интеграл \(\int_a^b f(x)\,dx\).</p>
+    <div class="card">
+      <div class="row">
+        <label>Функция:
+          <select id="rs-sel">
+            <option value="0">x² на [0; 2]</option>
+            <option value="1">sin x на [0; π]</option>
+            <option value="2">eˣ на [0; 1]</option>
+            <option value="3">√x на [0; 4]</option>
+            <option value="4">x³ − 3x на [−2; 2]</option>
+            <option value="custom">своя функция…</option>
+          </select>
+        </label>
+        <label>Способ:
+          <select id="rs-kind">
+            <option value="left">левые прямоугольники</option>
+            <option value="right">правые прямоугольники</option>
+            <option value="mid" selected>средние прямоугольники</option>
+            <option value="trap">трапеции</option>
+          </select>
+        </label>
+      </div>
+      <div id="rs-custom" class="expr-input" style="margin-top:8px" hidden>
+        <label for="rs-f" style="font-weight:600">\(f(x) =\)</label>
+        <input id="rs-f" value="x sin x" spellcheck="false" autocomplete="off" autocapitalize="off" aria-label="Своя функция">
+        <label for="rs-a" style="font-weight:600">\(a =\)</label>
+        <input id="rs-a" value="0" style="flex:0 1 70px" aria-label="Нижний предел">
+        <label for="rs-b" style="font-weight:600">\(b =\)</label>
+        <input id="rs-b" value="pi" style="flex:0 1 70px" aria-label="Верхний предел">
+      </div>
+      <canvas class="plot" id="rs-plot" style="margin-top:12px" aria-label="Суммы Римана: прямоугольники под графиком"></canvas>
+      <div class="sliders">
+        <div class="slider"><label for="rs-n">\(n\)</label><input type="range" id="rs-n" min="1" max="100" value="6"><output id="rs-n-out">6</output></div>
+      </div>
+      <div class="readout" id="rs-out" aria-live="polite"></div>
+    </div>
+    <details class="why">
+      <summary>Почему средние прямоугольники и трапеции намного точнее левых и правых?</summary>
+      <p>У левых и правых прямоугольников ошибка на каждой полоске порядка \(\Delta x^2\), а всего полосок \(\frac{1}{\Delta x}\) — итоговая ошибка порядка \(\Delta x\). У средних прямоугольников и трапеций ошибки «треугольников» по бокам почти компенсируют друг друга, и итог — порядка \(\Delta x^2\). Удвоили \(n\) — ошибка уменьшилась вчетверо. Проверьте на графике. А формула Симпсона (параболы вместо отрезков) даёт порядок \(\Delta x^4\).</p>
+    </details>
+
+    <!-- 2. Определение -->
+    <h2 id="definition">2. Определение интеграла Римана <span class="track math">Математика</span></h2>
+    <div class="card">
+      <p style="margin-top:0">Разбиение \(a = x_0 &lt; x_1 &lt; \ldots &lt; x_n = b\), в каждом отрезке выбрана точка \(\xi_i\), \(\Delta x_i = x_i - x_{i-1}\), \(\lambda = \max \Delta x_i\). <b>Интегральная сумма</b> \(\sigma = \sum_{i=1}^{n} f(\xi_i)\,\Delta x_i\).</p>
+      <p style="margin-bottom:0">\[ \int_a^b f(x)\,dx = \lim_{\lambda \to 0} \sum_{i=1}^{n} f(\xi_i)\,\Delta x_i, \]</p>
+      <p style="margin-bottom:0">если предел существует и <b>не зависит</b> ни от разбиений, ни от выбора точек \(\xi_i\). Тогда \(f\) называют интегрируемой.</p>
+    </div>
+    <details class="why">
+      <summary>Почему непрерывная на отрезке функция интегрируема</summary>
+      <p>Сравним верхнюю сумму \(S\) (на каждом кусочке берём \(\sup f\)) и нижнюю \(s\) (берём \(\inf f\)): любая интегральная сумма лежит между ними. По <a href="continuity.html#uniform">теореме Кантора</a> \(f\) равномерно непрерывна: для \(\varepsilon &gt; 0\) есть \(\delta\), при котором на кусочках длины меньше \(\delta\) колебание \(f\) меньше \(\varepsilon\). Тогда \(S - s &lt; \varepsilon(b - a)\), то есть разница стремится к нулю, и все суммы стремятся к одному числу. \(\blacksquare\)</p>
+      <p>А функция Дирихле (1 в рациональных точках, 0 в иррациональных) <b>не</b> интегрируема: при любом разбиении \(s = 0\), \(S = b - a\).</p>
+    </details>
+    <details class="why">
+      <summary>Свойства интеграла</summary>
+      <p>Линейность \(\int (\alpha f + \beta g) = \alpha\int f + \beta\int g\); аддитивность \(\int_a^b = \int_a^c + \int_c^b\); монотонность: \(f \le g \Rightarrow \int f \le \int g\). <b>Теорема о среднем:</b> для непрерывной \(f\) найдётся \(\xi \in [a;\ b]\), для которой \(\int_a^b f\,dx = f(\xi)(b - a)\) — площадь равна площади прямоугольника «средней высоты».</p>
+    </details>
+
+    <!-- 3. Первообразная -->
+    <h2 id="antiderivative">3. Первообразная и неопределённый интеграл</h2>
+    <p>\(F\) — <b>первообразная</b> для \(f\), если \(F' = f\). Все первообразные на промежутке отличаются на константу (их разность имеет нулевую производную — следствие теоремы Лагранжа), поэтому пишут \(\int f(x)\,dx = F(x) + C\).</p>
+    <p>Таблица получается чтением таблицы производных справа налево. Проверить любую строку — продифференцировать правую часть:</p>
+    <div class="card">
+      <p style="margin-top:0">\[ \int x^n\,dx = \frac{x^{n+1}}{n + 1} + C \;\; (n \ne -1), \]</p>
+      <p>\[ \int \frac{dx}{x} = \ln|x| + C, \qquad \int e^x\,dx = e^x + C, \]</p>
+      <p>\[ \int \sin x\,dx = -\cos x + C, \qquad \int \cos x\,dx = \sin x + C, \]</p>
+      <p>\[ \int \frac{dx}{1 + x^2} = \operatorname{arctg} x + C, \]</p>
+      <p style="margin-bottom:0">\[ \int \frac{dx}{\sqrt{1 - x^2}} = \arcsin x + C. \]</p>
+    </div>
+    <details class="why">
+      <summary>Откуда модуль в \(\ln|x|\)?</summary>
+      <p>При \(x &gt; 0\): \((\ln x)' = \frac{1}{x}\). При \(x &lt; 0\): \((\ln(-x))' = \frac{-1}{-x} = \frac{1}{x}\). Обе формулы объединяет \(\ln|x|\). Без модуля ответ был бы верен только на половине области определения.</p>
+    </details>
+
+    <!-- 4. Ньютон — Лейбниц -->
+    <h2 id="newton">4. Формула Ньютона — Лейбница: площадь через первообразную</h2>
+    <p>Почему площадь (предел сумм) вычисляется через «обратную производную»? Это центральная теорема анализа:</p>
+    <div class="card"><p style="margin:0">\[ \int_a^b f(x)\,dx = F(b) - F(a), \qquad F' = f,\; f \text{ непрерывна}. \]</p></div>
+    <ol class="steps" data-reveal>
+      <li>
+        <div class="formula">\[ \Phi(x) = \int_a^x f(t)\,dt \]</div>
+        <div class="why-line">Рассмотрим площадь от \(a\) до переменной точки \(x\) как функцию от \(x\).</div>
+      </li>
+      <li>
+        <div class="formula">\[ \Phi(x + h) - \Phi(x) = \int_x^{x+h} f(t)\,dt = f(\xi)\,h \]</div>
+        <div class="why-line">Приращение площади — узкая полоска. По теореме о среднем она равна \(f(\xi) h\) для некоторой \(\xi\) между \(x\) и \(x + h\).</div>
+      </li>
+      <li>
+        <div class="formula">\[ \Phi'(x) = \lim_{h \to 0} f(\xi) = f(x) \]</div>
+        <div class="why-line">Делим на \(h\). При \(h \to 0\) точка \(\xi \to x\), и по непрерывности \(f(\xi) \to f(x)\). Значит, \(\Phi\) — первообразная для \(f\) (теорема Барроу).</div>
+      </li>
+      <li>
+        <div class="formula">\[ \Phi(x) = F(x) + C, \qquad \Phi(a) = 0 \Rightarrow C = -F(a) \]</div>
+        <div class="why-line">Две первообразные отличаются на константу. Найдём её из того, что площадь от \(a\) до \(a\) равна нулю.</div>
+      </li>
+      <li>
+        <div class="formula">\[ \int_a^b f(x)\,dx = \Phi(b) = F(b) - F(a) \qquad \blacksquare \]</div>
+        <div class="why-line">Подставляем \(x = b\).</div>
+      </li>
+    </ol>
+
+    <!-- 5. Методы -->
+    <h2 id="methods">5. Методы интегрирования</h2>
+    <div class="card">
+      <h3 style="margin-top:0">Замена переменной</h3>
+      <p>\[ \int f\big(u(x)\big)\,u'(x)\,dx = \int f(u)\,du. \]</p>
+      <p>Это правило производной сложной функции, прочитанное наоборот. Ищите в интеграле функцию и рядом — её производную. Пример: \(\int x e^{x^2}\,dx\): \(u = x^2\), \(du = 2x\,dx\), получаем \(\frac{1}{2}\int e^u\,du = \frac{1}{2}e^{x^2} + C\).</p>
+      <h3>По частям</h3>
+      <p>\[ \int u\,dv = uv - \int v\,du. \]</p>
+      <p>Откуда: \((uv)' = u'v + uv'\); интегрируем обе части и переносим. Выбор \(u\): то, что упрощается при дифференцировании — многочлен (при \(e^x\), \(\sin\), \(\cos\)), а также \(\ln x\), \(\operatorname{arctg} x\). Пример: \(\int x e^x\,dx\): \(u = x\), \(dv = e^x dx\), получаем \(x e^x - \int e^x dx = (x - 1)e^x + C\).</p>
+      <h3>Рациональные дроби</h3>
+      <p style="margin-bottom:0">Дробь раскладывают на простейшие: \(\frac{1}{(x - 1)(x + 1)} = \frac{1/2}{x - 1} - \frac{1/2}{x + 1}\), каждая интегрируется через логарифм. Так интегрируется <b>любая</b> рациональная функция.</p>
+    </div>
+    <details class="why">
+      <summary>Не всякий интеграл «берётся»</summary>
+      <p>Первообразная непрерывной функции всегда существует (это \(\Phi\) из §4), но может не выражаться через элементарные функции: \(\int e^{-x^2}dx\), \(\int \frac{\sin x}{x}dx\), \(\int \frac{dx}{\ln x}\). Это доказанный факт (теорема Лиувилля), а не недостаток наших методов. Такие интегралы считают численно или через ряды.</p>
+    </details>
+
+    <!-- 6. Несобственные -->
+    <h2 id="improper">6. Несобственные интегралы</h2>
+    <p>Если промежуток бесконечен или функция неограничена, интеграл определяют как предел: \(\int_a^{+\infty} f\,dx = \lim_{A \to \infty} \int_a^A f\,dx\). Если предел конечен, интеграл <b>сходится</b>.</p>
+    <div class="card">
+      <p style="margin-top:0">\[ \int_1^{+\infty} \frac{dx}{x^p} \text{ сходится} \iff p &gt; 1, \]</p>
+      <p>\[ \int_0^{1} \frac{dx}{x^p} \text{ сходится} \iff p &lt; 1. \]</p>
+      <p style="margin-bottom:0"><b>Признак сравнения:</b> если \(0 \le f \le g\) и \(\int g\) сходится, то сходится и \(\int f\); если \(\int f\) расходится, расходится и \(\int g\).</p>
+    </div>
+    <details class="why">
+      <summary>Откуда граница \(p = 1\)</summary>
+      <p>При \(p \ne 1\): \(\int_1^A x^{-p}\,dx = \frac{A^{1-p} - 1}{1 - p}\). Если \(p &gt; 1\), то \(A^{1-p} \to 0\), и интеграл равен \(\frac{1}{p - 1}\). Если \(p &lt; 1\), то \(A^{1-p} \to \infty\). При \(p = 1\) получается \(\ln A \to \infty\). Около нуля всё наоборот, потому что там малые степени «больше».</p>
+    </details>
+
+    <!-- 7. Приложения -->
+    <h2 id="applications">7. Приложения</h2>
+    <div class="card">
+      <p style="margin-top:0"><b>Площадь между кривыми:</b> \(\int_a^b (f - g)\,dx\), где \(f \ge g\). Между \(y = x\) и \(y = x^2\): \(\int_0^1 (x - x^2)\,dx = \frac{1}{6}\).</p>
+      <p><span class="track tech">Техника</span> <b>Объём тела вращения:</b> \(V = \pi \int_a^b f(x)^2\,dx\). Конус — это вращение прямой \(y = \frac{r}{h}x\): \(V = \pi \int_0^h \frac{r^2 x^2}{h^2}\,dx = \frac{\pi r^2 h}{3}\). Вот откуда «треть» в школьной формуле.</p>
+      <p><span class="track tech">Техника</span> <b>Работа переменной силы:</b> \(A = \int_a^b F(x)\,dx\). Растяжение пружины на \(x\) (сила \(kt\)): \(A = \int_0^x kt\,dt = \frac{kx^2}{2}\) — это и есть потенциальная энергия пружины.</p>
+      <p style="margin-bottom:0"><span class="track econ">Экономика</span> <b>Излишек потребителя.</b> Спрос \(p = 100 - 2q\), рыночная цена \(p^* = 40\), значит \(q^* = 30\). Покупатели готовы были заплатить \(\int_0^{30} (100 - 2q)\,dq = 2100\), а заплатили \(40 \cdot 30 = 1200\). Излишек — 900. Так же полные издержки восстанавливают по предельным: \(C(q) = C(0) + \int_0^q MC(t)\,dt\).</p>
+    </div>
+
+    <!-- 8. Тренажёр -->
+    <h2 id="practice">8. Тренажёр</h2>
+    <div class="card">
+      <div class="row" style="justify-content:space-between">
+        <label>Режим:
+          <select id="mode">
+            <option value="anti">Найдите первообразную</option>
+            <option value="def">Вычислите определённый интеграл</option>
+            <option value="imp">Сходится ли несобственный интеграл?</option>
+            <option value="tf">Верно или неверно?</option>
+          </select>
+        </label>
+        <div class="stats" id="stats"></div>
+      </div>
+      <div class="task-eq" id="task"></div>
+      <div id="area"></div>
+      <div class="feedback" id="feedback" aria-live="polite"></div>
+      <div class="solution" id="solution"></div>
+      <div class="row" style="margin-top:12px">
+        <button type="button" id="hint-btn">Подсказка</button>
+        <button type="button" id="solution-btn">Показать решение</button>
+        <button type="button" class="primary" id="new-task-btn">Новая задача</button>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site">
+    <div class="wrap">Прогресс в тренажёре хранится только в вашем браузере.</div>
+  </footer>
+
+  <script src="../vendor/katex/katex.min.js"></script>
+  <script src="../vendor/katex/contrib/auto-render.min.js"></script>
+  <script src="../assets/js/math-render.js"></script>
+  <script src="../assets/js/steps.js"></script>
+  <script src="../assets/js/plot.js"></script>
+  <script src="../assets/js/expr.js"></script>
+  <script src="../assets/js/limits-core.js"></script>
+  <script src="../assets/js/integral-core.js"></script>
+  <script src="../assets/js/integral.js"></script>
+</body>
+</html>

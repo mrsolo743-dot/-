@@ -75,11 +75,13 @@
     }
 
     // bands: [{ yMin, yMax } | { xMin, xMax }, color?] — закрашенные полосы (ε-коридор, δ-окрестность)
-    draw(curves, points, lines, bands) {
+    // shapes: [{ pts: [[x, y], ...], fill, stroke, alpha }] — многоугольники (прямоугольники сумм Римана и т. п.)
+    draw(curves, points, lines, bands, shapes) {
       this.curves = curves || [];
       this.points = points || [];
       this.lines = lines || [];
       this.bands = bands || [];
+      this.shapes = shapes || [];
       this.redraw();
     }
 
@@ -170,6 +172,18 @@
         const [x2, y2] = this.toPx(l.x2, l.y2);
         ctx.moveTo(x1, y1); ctx.lineTo(x2, y2);
         ctx.stroke();
+        ctx.restore();
+      }
+
+      // Многоугольники
+      for (const sh of this.shapes || []) {
+        if (!sh.pts || sh.pts.length < 3) continue;
+        ctx.save();
+        ctx.beginPath();
+        sh.pts.forEach(([x, y], i) => { const [px, py] = this.toPx(x, y); if (i) ctx.lineTo(px, py); else ctx.moveTo(px, py); });
+        ctx.closePath();
+        if (sh.fill) { ctx.globalAlpha = sh.alpha === undefined ? 1 : sh.alpha; ctx.fillStyle = sh.fill; ctx.fill(); ctx.globalAlpha = 1; }
+        if (sh.stroke) { ctx.strokeStyle = sh.stroke; ctx.lineWidth = 1; ctx.stroke(); }
         ctx.restore();
       }
 

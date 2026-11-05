@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Системы линейных уравнений</title>
+  <meta name="description" content="Системы линейных уравнений: метод Гаусса, теорема Кронекера — Капелли, общее решение, правило Крамера, геометрия. Лаборатория с шагами и тренажёр.">
+  <link rel="stylesheet" href="../vendor/katex/katex.min.css">
+  <link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+  <header class="site">
+    <div class="wrap">
+      <a class="logo" href="../index.html">Математика по шагам</a>
+      <nav><a href="../index.html">Все темы</a></nav>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <h1>Системы линейных уравнений</h1>
+    <p class="lead">Линейная алгебра, 1 семестр. Как решить любую линейную систему, сколько у неё может быть решений и почему ответов бывает ровно «ноль, одно или бесконечно много».</p>
+    <p class="tracks">
+      <span class="track math">Математика — всё, включая доказательства</span>
+      <span class="track tech">Техника — §1–7</span>
+      <span class="track econ">Экономика — §1–3, 5–7</span>
+    </p>
+
+    <ul class="toc">
+      <li><a href="#geometry">Геометрия</a></li>
+      <li><a href="#gauss">Метод Гаусса</a></li>
+      <li><a href="#kc">Сколько решений</a></li>
+      <li><a href="#cramer">Правило Крамера</a></li>
+      <li><a href="#lab">Лаборатория</a></li>
+      <li><a href="#applications">Приложения</a></li>
+      <li><a href="#practice">Тренажёр</a></li>
+    </ul>
+
+    <!-- 1. Геометрия -->
+    <h2 id="geometry">1. Что значит решить систему: геометрия</h2>
+    <p>Система \(m\) линейных уравнений с \(n\) неизвестными коротко записывается как \(Ax = b\): \(A\) — матрица коэффициентов, \(x\) — столбец неизвестных, \(b\) — столбец свободных членов. Каждое уравнение с двумя неизвестными — прямая на плоскости, а решение системы — общие точки всех прямых. Двигайте коэффициенты:</p>
+    <div class="card">
+      <canvas class="plot" id="lines-plot" aria-label="Две прямые и их общая точка"></canvas>
+      <div class="sliders">
+        <div class="slider"><label for="p1">\(a_1\)</label><input type="range" id="p1" min="-5" max="5" step="1" value="1"><output id="p1-out"></output></div>
+        <div class="slider"><label for="q1">\(b_1\)</label><input type="range" id="q1" min="-5" max="5" step="1" value="1"><output id="q1-out"></output></div>
+        <div class="slider"><label for="r1">\(c_1\)</label><input type="range" id="r1" min="-5" max="5" step="1" value="3"><output id="r1-out"></output></div>
+        <div class="slider"><label for="p2">\(a_2\)</label><input type="range" id="p2" min="-5" max="5" step="1" value="1"><output id="p2-out"></output></div>
+        <div class="slider"><label for="q2">\(b_2\)</label><input type="range" id="q2" min="-5" max="5" step="1" value="-1"><output id="q2-out"></output></div>
+        <div class="slider"><label for="r2">\(c_2\)</label><input type="range" id="r2" min="-5" max="5" step="1" value="1"><output id="r2-out"></output></div>
+      </div>
+      <div class="readout" id="lines-out" aria-live="polite"></div>
+      <p class="small-note" style="margin-bottom:0">Попробуйте сделать прямые параллельными (\(a_2 = a_1,\ b_2 = b_1,\ c_2 \ne c_1\)) и совпадающими (все три коэффициента равны).</p>
+    </div>
+    <p>Две прямые пересекаются в одной точке, параллельны или совпадают — других вариантов нет. С тремя неизвестными уравнения задают плоскости, и картина та же: общая точка, общая прямая (или плоскость) или ничего. Это не совпадение, а теорема (§3).</p>
+    <details class="why">
+      <summary>Почему не бывает ровно двух решений</summary>
+      <p>Пусть \(x_1 \ne x_2\) — два решения: \(Ax_1 = b\) и \(Ax_2 = b\). Тогда для любого числа \(t\) вектор \(x_1 + t(x_2 - x_1)\) тоже решение:</p>
+      <p>\[ A\bigl(x_1 + t(x_2 - x_1)\bigr) = Ax_1 + t(Ax_2 - Ax_1) = b + t(b - b) = b. \]</p>
+      <p>Это целая прямая решений, проходящая через \(x_1\) и \(x_2\), — бесконечно много. Значит, если решений больше одного, их бесконечно много.</p>
+    </details>
+
+    <!-- 2. Гаусс -->
+    <h2 id="gauss">2. Метод Гаусса</h2>
+    <p>Записываем <b>расширенную матрицу</b> \((A \mid b)\) и упрощаем её тремя <b>элементарными преобразованиями</b> строк:</p>
+    <ul>
+      <li>переставить две строки;</li>
+      <li>умножить строку на число \(k \ne 0\);</li>
+      <li>прибавить к строке другую строку, умноженную на число.</li>
+    </ul>
+    <p>Цель — <b>ступенчатый вид</b>: в каждой следующей строке первый ненулевой элемент (ведущий) стоит правее, чем в предыдущей. Тогда последнее уравнение содержит меньше всего неизвестных, и система решается снизу вверх (обратный ход). Если дополнительно сделать ведущие равными 1 и обнулить столбцы над ними (метод Гаусса — Жордана), ответ читается прямо из матрицы.</p>
+    <div class="card">
+      <p style="margin-top:0">Пример:</p>
+      <p>\[ \left\{\begin{aligned} x + y &amp;= 3 \\ x - y &amp;= 1 \end{aligned}\right. \quad \to \]</p>
+      <p>\[ \left(\begin{array}{cc|c} 1 &amp; 1 &amp; 3 \\ 1 &amp; -1 &amp; 1 \end{array}\right) \xrightarrow{R_2 \to R_2 - R_1} \left(\begin{array}{cc|c} 1 &amp; 1 &amp; 3 \\ 0 &amp; -2 &amp; -2 \end{array}\right). \]</p>
+      <p style="margin-bottom:0">Из второй строки \(-2y = -2\), \(y = 1\); из первой \(x = 3 - y = 2\).</p>
+    </div>
+    <details class="why">
+      <summary>Почему преобразования не меняют множество решений</summary>
+      <p>Если \(x\) удовлетворяет уравнениям \(r_i\) и \(r_j\), то удовлетворяет и \(r_i + k r_j\) (сложили верные равенства). И наоборот: исходное уравнение возвращается обратным преобразованием \(r_i \to r_i - k r_j\). Перестановка и умножение на \(k \ne 0\) тоже обратимы. Значит, каждое решение старой системы — решение новой и наоборот.</p>
+      <p>Умножать на ноль нельзя: уравнение превратится в \(0 = 0\) и потеряется информация.</p>
+    </details>
+
+    <!-- 3. Кронекер — Капелли -->
+    <h2 id="kc">3. Сколько решений: теорема Кронекера — Капелли</h2>
+    <div class="card">
+      <p style="margin-top:0"><b>Теорема.</b> Система \(Ax = b\) совместна (имеет решение) тогда и только тогда, когда \(\operatorname{rang} A = \operatorname{rang}(A \mid b)\). Если при этом ранг \(r\) равен числу неизвестных \(n\), решение единственно, а если \(r &lt; n\), решений бесконечно много: \(n - r\) неизвестных можно выбирать свободно.</p>
+    </div>
+    <p>На языке метода Гаусса это видно сразу по ступенчатому виду:</p>
+    <ul>
+      <li>есть строка \((0\ \ldots\ 0 \mid c)\) с \(c \ne 0\) — это уравнение \(0 = c\), решений <b>нет</b>;</li>
+      <li>такой строки нет и ступенек столько же, сколько неизвестных — решение <b>одно</b>;</li>
+      <li>ступенек меньше — неизвестные без ведущих элементов <b>свободные</b>, решений бесконечно много.</li>
+    </ul>
+    <div class="card">
+      <p style="margin-top:0"><b>Общее решение.</b> Пусть после Гаусса — Жордана получилось</p>
+      <p>\[ \left(\begin{array}{ccc|c} 1 &amp; 0 &amp; -2 &amp; 1 \\ 0 &amp; 1 &amp; 3 &amp; 2 \end{array}\right). \]</p>
+      <p style="margin-bottom:0">Ведущие стоят в столбцах \(x\) и \(y\), значит, \(z\) — свободная: \(z = t\). Тогда \(x = 1 + 2t\), \(y = 2 - 3t\), \(t \in \mathbb{R}\). Это прямая в пространстве: точка \((1;\ 2;\ 0)\) плюс направление \((2;\ -3;\ 1)\).</p>
+    </div>
+    <details class="why">
+      <summary>Почему теорема верна</summary>
+      <p>Элементарные преобразования не меняют ни решения, ни ранги, поэтому достаточно проверить утверждение для ступенчатой матрицы. Ранг ступенчатой матрицы — число ненулевых строк.</p>
+      <p>Если \(\operatorname{rang}(A \mid b) &gt; \operatorname{rang} A\), то какая-то ненулевая строка расширенной матрицы имеет нули во всех столбцах \(A\), то есть это \(0 = c\), \(c \ne 0\) — противоречие, решений нет. Если ранги равны, то, придав свободным неизвестным любые значения, мы из каждой ненулевой строки однозначно выражаем её ведущую неизвестную (снизу вверх). Свободных неизвестных \(n - r\); при \(r = n\) их нет, и решение одно.</p>
+    </details>
+    <p class="small-note">Однородная система \(Ax = 0\) всегда совместна (есть нулевое решение). Ненулевые решения у квадратной однородной системы есть тогда и только тогда, когда \(\det A = 0\).</p>
+
+    <!-- 4. Крамер -->
+    <h2 id="cramer">4. Правило Крамера</h2>
+    <p>Для квадратной системы с \(\Delta = \det A \ne 0\) есть готовая формула:</p>
+    <div class="card"><p style="margin:0">\[ x_i = \frac{\Delta_i}{\Delta}, \]</p><p style="margin-bottom:0">где \(\Delta_i\) — определитель матрицы, в которой \(i\)-й столбец заменён столбцом свободных членов \(b\).</p></div>
+    <details class="why">
+      <summary>Откуда формула (вывод для 2×2)</summary>
+      <p>Система \(\left\{\begin{aligned} ax + by &amp;= e \\ cx + dy &amp;= f \end{aligned}\right.\) Умножим первое уравнение на \(d\), второе на \(b\) и вычтем: \(y\) исчезает.</p>
+      <p>\[ (ad - bc)\,x = ed - bf \quad\Rightarrow\quad x = \frac{ed - bf}{ad - bc} = \frac{\begin{vmatrix} e &amp; b \\ f &amp; d \end{vmatrix}}{\begin{vmatrix} a &amp; b \\ c &amp; d \end{vmatrix}}. \]</p>
+      <p>В числителе — определитель, где столбец при \(x\) заменён на \((e;\ f)\). Аналогично для \(y\). В общем случае: \(x = A^{-1}b\), а \(A^{-1}\) выражается через алгебраические дополнения, делённые на \(\det A\); раскрывая произведение, получаем ровно \(\Delta_i / \Delta\).</p>
+    </details>
+    <p class="small-note">Крамер удобен для 2×2 и 3×3 и для теории (например, видно, что решение непрерывно зависит от коэффициентов). Для больших систем он медленный — там используют Гаусса.</p>
+
+    <!-- 5. Лаборатория -->
+    <h2 id="lab">5. Лаборатория</h2>
+    <p>Введите расширенную матрицу системы: коэффициенты слева от черты, свободные члены справа. Числа — целые, дроби 3/4 или десятичные.</p>
+    <div class="card">
+      <div class="row">
+        <label>Размер:
+          <select id="lab-size">
+            <option value="2x2">2 уравнения, 2 неизвестных</option>
+            <option value="3x3" selected>3 уравнения, 3 неизвестных</option>
+            <option value="3x4">3 уравнения, 4 неизвестных</option>
+            <option value="4x3">4 уравнения, 3 неизвестных</option>
+          </select>
+        </label>
+        <button type="button" id="lab-random">Случайная система</button>
+      </div>
+      <div id="lab-system"></div>
+      <div id="lab-grid"></div>
+      <div class="row">
+        <button type="button" class="primary" id="lab-gauss">Решить методом Гаусса</button>
+        <button type="button" id="lab-cramer">По Крамеру</button>
+      </div>
+      <div id="lab-out" aria-live="polite"></div>
+    </div>
+
+    <!-- 6. Приложения -->
+    <h2 id="applications">6. Приложения</h2>
+    <div class="card">
+      <p style="margin-top:0"><span class="track tech">Техника</span> <b>Электрическая цепь (законы Кирхгофа).</b> Источник 10 В, последовательно резистор 1 Ом, затем две параллельные ветви по 2 Ом. Закон узлов и два закона контуров дают систему для токов:</p>
+      <p>\[ \left\{\begin{aligned} I_1 - I_2 - I_3 &amp;= 0 \\ I_1 + 2I_2 &amp;= 10 \\ I_1 + 2I_3 &amp;= 10 \end{aligned}\right. \quad\Rightarrow\quad I_1 = 5,\ \ I_2 = I_3 = 2{,}5. \]</p>
+      <p>Так считают цепи любой сложности — и программы для схемотехники, и инженеры на бумаге.</p>
+      <p><span class="track econ">Экономика</span> <b>Равновесие на двух связанных рынках.</b> Спрос на товар зависит и от цены «соседа»: \(Q^d_1 = 8 - 2P_1 + P_2\), \(Q^s_1 = -2 + 2P_1\); \(Q^d_2 = 12 + P_1 - P_2\), \(Q^s_2 = -2 + 2P_2\). Приравниваем спрос и предложение:</p>
+      <p style="margin-bottom:0">\[ \left\{\begin{aligned} 4P_1 - P_2 &amp;= 10 \\ -P_1 + 3P_2 &amp;= 14 \end{aligned}\right. \quad\Rightarrow\quad \begin{gathered} P_1 = 4,\ \ P_2 = 6, \\ Q_1 = 6,\ \ Q_2 = 10. \end{gathered} \]</p>
+    </div>
+
+    <!-- 7. Тренажёр -->
+    <h2 id="practice">7. Тренажёр</h2>
+    <div class="card">
+      <div class="row" style="justify-content:space-between">
+        <label>Режим:
+          <select id="mode">
+            <option value="solve2">Решить систему 2 × 2</option>
+            <option value="solve3">Решить систему 3 × 3</option>
+            <option value="classify">Сколько решений?</option>
+            <option value="cramer">Определители Крамера</option>
+            <option value="tf">Верно или неверно?</option>
+          </select>
+        </label>
+        <div class="stats" id="stats"></div>
+      </div>
+      <div class="task-eq" id="task"></div>
+      <div id="area"></div>
+      <div class="feedback" id="feedback" aria-live="polite"></div>
+      <div class="solution" id="solution"></div>
+      <div class="row" style="margin-top:12px">
+        <button type="button" id="solution-btn">Показать решение</button>
+        <button type="button" class="primary" id="new-task-btn">Новая задача</button>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site">
+    <div class="wrap">Прогресс в тренажёре хранится только в вашем браузере.</div>
+  </footer>
+
+  <script src="../vendor/katex/katex.min.js"></script>
+  <script src="../vendor/katex/contrib/auto-render.min.js"></script>
+  <script src="../assets/js/math-render.js"></script>
+  <script src="../assets/js/plot.js"></script>
+  <script src="../assets/js/lin-core.js"></script>
+  <script src="../assets/js/lin-ui.js"></script>
+  <script src="../assets/js/slae.js"></script>
+</body>
+</html>
